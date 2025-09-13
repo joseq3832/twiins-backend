@@ -11,6 +11,7 @@ use OpenApi\Annotations as OA;
  *     title="ImmediateFamily",
  *     description="Modelo de familia inmediata",
  *     required={"employee_id", "relative_name", "relationship", "birth_date"},
+ *
  *     @OA\Property(
  *         property="id",
  *         type="integer",

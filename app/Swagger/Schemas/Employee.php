@@ -11,6 +11,7 @@ use OpenApi\Annotations as OA;
  *     title="Employee",
  *     description="Modelo de empleado",
  *     required={"name", "email", "position", "hire_date"},
+ *
  *     @OA\Property(
  *         property="id",
  *         type="integer",
@@ -61,6 +62,7 @@ use OpenApi\Annotations as OA;
  *         property="immediate_family",
  *         type="array",
  *         description="Lista de familiares inmediatos",
+ *
  *         @OA\Items(ref="#/components/schemas/ImmediateFamily")
  *     )
  * )

@@ -10,6 +10,7 @@ use OpenApi\Annotations as OA;
  *     type="object",
  *     title="PaginatedEmployeeResponse",
  *     description="Respuesta paginada de empleados",
+ *
  *     @OA\Property(
  *         property="current_page",
  *         type="integer",
@@ -20,8 +21,10 @@ use OpenApi\Annotations as OA;
  *         property="data",
  *         type="array",
  *         description="Lista de empleados",
+ *
  *         @OA\Items(ref="#/components/schemas/Employee")
  *     ),
+ *
  *     @OA\Property(
  *         property="first_page_url",
  *         type="string",
@@ -85,12 +88,13 @@ use OpenApi\Annotations as OA;
  *         example=75
  *     )
  * )
- * 
+ *
  * @OA\Schema(
  *     schema="PaginatedImmediateFamilyResponse",
  *     type="object",
  *     title="PaginatedImmediateFamilyResponse",
  *     description="Respuesta paginada de familia inmediata",
+ *
  *     @OA\Property(
  *         property="current_page",
  *         type="integer",
@@ -101,8 +105,10 @@ use OpenApi\Annotations as OA;
  *         property="data",
  *         type="array",
  *         description="Lista de familiares",
+ *
  *         @OA\Items(ref="#/components/schemas/ImmediateFamily")
  *     ),
+ *
  *     @OA\Property(
  *         property="total",
  *         type="integer",
@@ -110,12 +116,13 @@ use OpenApi\Annotations as OA;
  *         example=25
  *     )
  * )
- * 
+ *
  * @OA\Schema(
  *     schema="ErrorResponse",
  *     type="object",
  *     title="ErrorResponse",
  *     description="Respuesta de error",
+ *
  *     @OA\Property(
  *         property="message",
  *         type="string",
