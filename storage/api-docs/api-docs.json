@@ -544,6 +544,36 @@
                                         "type": "string",
                                         "format": "date",
                                         "example": "2023-01-15"
+                                    },
+                                    "immediate_family": {
+                                        "description": "Lista de familiares inmediatos (opcional)",
+                                        "type": "array",
+                                        "items": {
+                                            "required": [
+                                                "family_name",
+                                                "relationship",
+                                                "date_of_birth"
+                                            ],
+                                            "properties": {
+                                                "family_name": {
+                                                    "description": "Nombre del familiar",
+                                                    "type": "string",
+                                                    "example": "María García"
+                                                },
+                                                "relationship": {
+                                                    "description": "Relación familiar",
+                                                    "type": "string",
+                                                    "example": "Hijo/a"
+                                                },
+                                                "date_of_birth": {
+                                                    "description": "Fecha de nacimiento",
+                                                    "type": "string",
+                                                    "format": "date",
+                                                    "example": "2025-09-16"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
                                     }
                                 },
                                 "type": "object"
@@ -675,6 +705,41 @@
                                         "type": "string",
                                         "format": "date",
                                         "example": "2023-01-15"
+                                    },
+                                    "immediate_family": {
+                                        "description": "Lista de familiares inmediatos (opcional). Para actualizar: incluir 'id'. Para eliminar: incluir 'id' y '_delete': true. Para crear: omitir 'id'",
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "id": {
+                                                    "description": "ID del familiar (solo para actualizar o eliminar)",
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "family_name": {
+                                                    "description": "Nombre del familiar",
+                                                    "type": "string",
+                                                    "example": "María García"
+                                                },
+                                                "relationship": {
+                                                    "description": "Relación familiar",
+                                                    "type": "string",
+                                                    "example": "Hijo/a"
+                                                },
+                                                "date_of_birth": {
+                                                    "description": "Fecha de nacimiento",
+                                                    "type": "string",
+                                                    "format": "date",
+                                                    "example": "2025-09-16"
+                                                },
+                                                "_delete": {
+                                                    "description": "Marcar como true para eliminar este familiar",
+                                                    "type": "boolean",
+                                                    "example": false
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
                                     }
                                 },
                                 "type": "object"

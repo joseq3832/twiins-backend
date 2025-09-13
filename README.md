@@ -154,7 +154,185 @@ DELETE /api/employees/{id}      # Eliminar empleado
 GET    /api/immediate-family    # Listar familiares
 POST   /api/immediate-family    # Crear familiar
 # ... más endpoints CRUD
+
+GET    /api/health             # Health Check (monitoreo)
 ```
+
+---
+
+## 🏥 Módulo Health Check - Monitoreo y CI/CD
+
+### ¿Por qué es importante el Health Check?
+
+El endpoint `/api/health` es **fundamental** para los procesos de **CI/CD** y **monitoreo en producción**. Proporciona una verificación integral del estado de la aplicación y sus dependencias.
+
+### 🎯 Beneficios en CI/CD
+
+#### 1. **Verificación Post-Deployment**
+```bash
+# En pipelines de CI/CD
+curl -f http://backend.twiins.local/api/health || exit 1
+```
+- ✅ Confirma que el deployment fue exitoso
+- ✅ Valida conectividad con servicios externos
+- ✅ Detecta problemas antes que los usuarios
+
+#### 2. **Smoke Tests Automatizados**
+```yaml
+# Ejemplo GitHub Actions
+- name: Health Check
+  run: |
+    response=$(curl -s -o /dev/null -w "%{http_code}" http://app/api/health)
+    if [ $response != "200" ]; then
+      echo "Health check failed with status $response"
+      exit 1
+    fi
+```
+
+#### 3. **Rolling Deployments**
+- **Blue-Green Deployments:** Verificar nueva versión antes del switch
+- **Canary Releases:** Monitorear salud durante rollout gradual
+- **Zero-Downtime:** Asegurar que servicios estén listos antes de recibir tráfico
+
+### 🔍 Qué Verifica el Health Check
+
+#### **Base de Datos**
+```json
+{
+  "database": {
+    "status": "healthy",
+    "message": "Database connection successful",
+    "response_time_ms": 12.5,
+    "connection": "mysql"
+  }
+}
+```
+
+#### **Sistema de Cache**
+```json
+{
+  "cache": {
+    "status": "healthy",
+    "message": "Cache system operational",
+    "response_time_ms": 3.2,
+    "driver": "redis"
+  }
+}
+```
+
+#### **Sistema de Almacenamiento**
+```json
+{
+  "storage": {
+    "status": "healthy",
+    "message": "Storage system operational",
+    "response_time_ms": 8.1,
+    "driver": "local"
+  }
+}
+```
+
+#### **Estado de la Aplicación**
+```json
+{
+  "application": {
+    "status": "healthy",
+    "message": "Application running normally",
+    "php_version": "8.4.0",
+    "laravel_version": "11.x"
+  }
+}
+```
+
+### 🚨 Estados de Respuesta
+
+| Estado | HTTP Code | Descripción |
+|--------|-----------|-------------|
+| `healthy` | 200 | Todos los servicios funcionan correctamente |
+| `degraded` | 200 | Servicios operativos pero con advertencias |
+| `unhealthy` | 503 | Uno o más servicios críticos fallan |
+
+### 🔧 Integración con Herramientas de Monitoreo
+
+#### **Kubernetes Probes**
+```yaml
+livenessProbe:
+  httpGet:
+    path: /api/health
+    port: 80
+  initialDelaySeconds: 30
+  periodSeconds: 10
+
+readinessProbe:
+  httpGet:
+    path: /api/health
+    port: 80
+  initialDelaySeconds: 5
+  periodSeconds: 5
+```
+
+#### **Docker Compose Healthcheck**
+```yaml
+services:
+  app:
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+```
+
+#### **Load Balancer Health Checks**
+- **AWS ALB/ELB:** Configurar health check en `/api/health`
+- **Nginx:** Usar como upstream health check
+- **HAProxy:** Verificación de backend servers
+
+### 📊 Métricas y Alertas
+
+#### **Prometheus/Grafana**
+```bash
+# Métricas expuestas
+http_requests_total{endpoint="/api/health",status="200"}
+health_check_response_time_seconds
+health_check_database_status
+health_check_cache_status
+```
+
+#### **Alertas Recomendadas**
+```yaml
+# Ejemplo Prometheus Alert
+- alert: HealthCheckFailing
+  expr: health_check_status != 1
+  for: 2m
+  labels:
+    severity: critical
+  annotations:
+    summary: "Application health check failing"
+```
+
+### 🛡️ Seguridad y Rate Limiting
+
+- **Throttling:** 60 requests/minuto para prevenir abuso
+- **Sin autenticación:** Accesible para sistemas de monitoreo
+- **Información limitada:** No expone datos sensibles en producción
+
+### 🧪 Testing del Health Check
+
+```bash
+# Ejecutar tests específicos
+./vendor/bin/sail test tests/Feature/HealthCheckTest.php
+
+# Verificar manualmente
+curl -i http://backend.twiins.local/api/health
+```
+
+**El módulo Health Check es esencial para:**
+- ✅ **Deployments seguros** y verificables
+- ✅ **Monitoreo proactivo** de la aplicación
+- ✅ **Detección temprana** de problemas
+- ✅ **Automatización** de procesos DevOps
+- ✅ **Cumplimiento** de SLAs y SLOs
 
 ---
 
