@@ -30,10 +30,20 @@ class EmployeeCrudTest extends TestCase
                 'data' => [
                     '*' => ['id', 'name', 'email', 'position', 'created_at', 'updated_at'],
                 ],
-                'current_page',
-                'total',
-                'per_page',
-                'last_page',
+                'meta' => [
+                    'current_page',
+                    'total',
+                    'per_page',
+                    'last_page',
+                    'from',
+                    'to',
+                ],
+                'links' => [
+                    'first',
+                    'last',
+                    'prev',
+                    'next',
+                ],
             ]);
     }
 

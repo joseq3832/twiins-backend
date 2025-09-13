@@ -33,9 +33,9 @@ class AdvancedFilteringTest extends TestCase
 
         $result = $this->employeeRepository->filter($request);
 
-        $this->assertEquals(10, $result->count());
-        $this->assertEquals(25, $result->total());
-        $this->assertEquals(1, $result->currentPage());
+        $this->assertEquals(10, count($result['data']));
+        $this->assertEquals(25, $result['meta']['total']);
+        $this->assertEquals(1, $result['meta']['current_page']);
     }
 
     public function test_search_functionality()
@@ -48,7 +48,7 @@ class AdvancedFilteringTest extends TestCase
         $request = new Request(['search' => 'John']);
         $result = $this->employeeRepository->filter($request);
 
-        $this->assertEquals(2, $result->count()); // John Doe and Bob Johnson
+        $this->assertEquals(2, $result['meta']['total']); // John Doe and Bob Johnson
     }
 
     public function test_sorting_functionality()
@@ -61,13 +61,13 @@ class AdvancedFilteringTest extends TestCase
         // Test ascending sort
         $request = new Request(['sort' => 'name']);
         $result = $this->employeeRepository->filter($request);
-        $names = $result->pluck('name')->toArray();
+        $names = array_map(fn($emp) => $emp->name, $result['data']);
         $this->assertEquals(['Alice', 'Bob', 'Charlie'], $names);
 
         // Test descending sort
         $request = new Request(['sort' => '-name']);
         $result = $this->employeeRepository->filter($request);
-        $names = $result->pluck('name')->toArray();
+        $names = array_map(fn($emp) => $emp->name, $result['data']);
         $this->assertEquals(['Charlie', 'Bob', 'Alice'], $names);
     }
 
@@ -80,7 +80,7 @@ class AdvancedFilteringTest extends TestCase
 
         $request = new Request(['sort' => 'position,-name']);
         $result = $this->employeeRepository->filter($request);
-        $data = $result->map(fn ($emp) => $emp->position.':'.$emp->name)->toArray();
+        $data = array_map(fn ($emp) => $emp->position.':'.$emp->name, $result['data']);
         $this->assertEquals(['Developer:Bob', 'Developer:Alice', 'Manager:Charlie'], $data);
     }
 
@@ -90,7 +90,7 @@ class AdvancedFilteringTest extends TestCase
 
         $request = new Request(['select' => 'id,name']);
         $result = $this->employeeRepository->filter($request);
-        $employee = $result->first();
+        $employee = $result['data'][0];
 
         $this->assertArrayHasKey('id', $employee->toArray());
         $this->assertArrayHasKey('name', $employee->toArray());
@@ -110,7 +110,7 @@ class AdvancedFilteringTest extends TestCase
         ]);
 
         $result = $this->employeeRepository->filter($request);
-        $this->assertEquals(2, $result->count());
+        $this->assertEquals(2, $result['meta']['total']);
     }
 
     public function test_not_equal_filter()
@@ -126,7 +126,7 @@ class AdvancedFilteringTest extends TestCase
         ]);
 
         $result = $this->employeeRepository->filter($request);
-        $this->assertEquals(1, $result->count());
+        $this->assertEquals(1, $result['meta']['total']);
     }
 
     public function test_in_filter()
@@ -143,7 +143,7 @@ class AdvancedFilteringTest extends TestCase
         ]);
 
         $result = $this->employeeRepository->filter($request);
-        $this->assertEquals(2, $result->count());
+        $this->assertEquals(2, $result['meta']['total']);
     }
 
     public function test_greater_than_filter()
@@ -159,7 +159,7 @@ class AdvancedFilteringTest extends TestCase
         ]);
 
         $result = $this->employeeRepository->filter($request);
-        $this->assertEquals(2, $result->count());
+        $this->assertEquals(2, $result['meta']['total']);
     }
 
     public function test_between_filter()
@@ -176,7 +176,7 @@ class AdvancedFilteringTest extends TestCase
         ]);
 
         $result = $this->employeeRepository->filter($request);
-        $this->assertEquals(2, $result->count());
+        $this->assertEquals(2, $result['meta']['total']);
     }
 
     public function test_ilike_filter()
@@ -192,7 +192,7 @@ class AdvancedFilteringTest extends TestCase
         ]);
 
         $result = $this->employeeRepository->filter($request);
-        $this->assertEquals(2, $result->count()); // John Doe and Johnny Cash
+        $this->assertEquals(2, $result['meta']['total']); // John Doe and Johnny Cash
     }
 
     public function test_starts_with_filter()
@@ -208,7 +208,7 @@ class AdvancedFilteringTest extends TestCase
         ]);
 
         $result = $this->employeeRepository->filter($request);
-        $this->assertEquals(2, $result->count()); // John Doe and Johnny Cash
+        $this->assertEquals(2, $result['meta']['total']); // John Doe and Johnny Cash
     }
 
     public function test_includes_relations()
@@ -218,7 +218,7 @@ class AdvancedFilteringTest extends TestCase
 
         $request = new Request(['include' => 'immediateFamily']);
         $result = $this->employeeRepository->filter($request);
-        $employee = $result->first();
+        $employee = $result['data'][0];
 
         $this->assertTrue($employee->relationLoaded('immediateFamily'));
         $this->assertEquals(2, $employee->immediateFamily->count());
@@ -257,8 +257,8 @@ class AdvancedFilteringTest extends TestCase
 
         $result = $this->employeeRepository->filter($request);
 
-        $this->assertEquals(1, $result->count()); // Only John Developer matches all criteria
-        $employee = $result->first();
+        $this->assertEquals(1, $result['meta']['total']); // Only John Developer matches all criteria
+        $employee = $result['data'][0];
         $this->assertEquals('John Developer', $employee->name);
         $this->assertArrayNotHasKey('email', $employee->toArray());
     }

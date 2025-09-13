@@ -58,7 +58,7 @@ class BaseRepository
      * Advanced filtering method similar to nest-paginate
      * Supports pagination, sorting, searching, filtering with operators, column selection, and relations
      */
-    public function filter(Request $request): LengthAwarePaginator
+    public function filter(Request $request): array
     {
         $query = $this->model->newQuery();
 
@@ -78,7 +78,10 @@ class BaseRepository
         $this->applySorting($query, $request);
 
         // Apply pagination
-        return $this->applyPagination($query, $request);
+        $paginator = $this->applyPagination($query, $request);
+
+        // Transform to custom structure
+        return $this->transformPaginatorResponse($paginator);
     }
 
     /**
@@ -253,9 +256,33 @@ class BaseRepository
     protected function applyPagination(Builder $query, Request $request): LengthAwarePaginator
     {
         $page = max(1, (int) $request->get('page', 1));
-        $limit = min(100, max(1, (int) $request->get('limit', 15)));
+        $limit = min(100, max(1, (int) $request->get('limit', 20)));
 
         return $query->paginate($limit, ['*'], 'page', $page);
+    }
+
+    /**
+     * Transform paginator response to custom structure with data, meta, and links
+     */
+    protected function transformPaginatorResponse(LengthAwarePaginator $paginator): array
+    {
+        return [
+            'data' => $paginator->items(),
+            'meta' => [
+                'current_page' => $paginator->currentPage(),
+                'from' => $paginator->firstItem(),
+                'last_page' => $paginator->lastPage(),
+                'per_page' => $paginator->perPage(),
+                'to' => $paginator->lastItem(),
+                'total' => $paginator->total(),
+            ],
+            'links' => [
+                'first' => $paginator->url(1),
+                'last' => $paginator->url($paginator->lastPage()),
+                'prev' => $paginator->previousPageUrl(),
+                'next' => $paginator->nextPageUrl(),
+            ],
+        ];
     }
 
     /**
