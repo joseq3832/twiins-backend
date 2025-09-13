@@ -28,6 +28,7 @@ class ImmediateFamilyController extends Controller
      *     tags={"immediate-family"},
      *     summary="Obtener todos los familiares inmediatos",
      *     description="Obtiene una lista paginada de todos los familiares inmediatos",
+     *     security={{"bearerAuth":{}}},
      *
      *     @OA\Parameter(
      *         name="page",
@@ -73,6 +74,7 @@ class ImmediateFamilyController extends Controller
      *     tags={"immediate-family"},
      *     summary="Crear un nuevo familiar inmediato",
      *     description="Crea un nuevo familiar inmediato para un empleado",
+     *     security={{"bearerAuth":{}}},
      *
      *     @OA\RequestBody(
      *         required=true,
@@ -123,6 +125,7 @@ class ImmediateFamilyController extends Controller
      *     tags={"immediate-family"},
      *     summary="Obtener un familiar inmediato específico",
      *     description="Obtiene los detalles de un familiar inmediato por su ID",
+     *     security={{"bearerAuth":{}}},
      *
      *     @OA\Parameter(
      *         name="id",
@@ -165,6 +168,7 @@ class ImmediateFamilyController extends Controller
      *     tags={"immediate-family"},
      *     summary="Actualizar un familiar inmediato",
      *     description="Actualiza los datos de un familiar inmediato existente",
+     *     security={{"bearerAuth":{}}},
      *
      *     @OA\Parameter(
      *         name="id",
@@ -236,6 +240,7 @@ class ImmediateFamilyController extends Controller
      *     tags={"immediate-family"},
      *     summary="Eliminar un familiar inmediato",
      *     description="Elimina un familiar inmediato del sistema",
+     *     security={{"bearerAuth":{}}},
      *
      *     @OA\Parameter(
      *         name="id",
@@ -277,6 +282,7 @@ class ImmediateFamilyController extends Controller
      *     tags={"immediate-family"},
      *     summary="Obtener familiares inmediatos por empleado",
      *     description="Obtiene todos los familiares inmediatos de un empleado específico",
+     *     security={{"bearerAuth":{}}},
      *
      *     @OA\Parameter(
      *         name="employeeId",

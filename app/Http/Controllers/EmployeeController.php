@@ -22,6 +22,7 @@ class EmployeeController extends Controller
      *     tags={"employees"},
      *     summary="Listar empleados con filtrado avanzado",
      *     description="Obtiene una lista paginada de empleados con capacidades de filtrado, búsqueda y ordenamiento avanzadas",
+     *     security={{"bearerAuth":{}}},
      *
      *     @OA\Parameter(
      *         name="page",
@@ -123,6 +124,7 @@ class EmployeeController extends Controller
      *     tags={"employees"},
      *     summary="Crear un nuevo empleado",
      *     description="Crea un nuevo empleado en el sistema",
+     *     security={{"bearerAuth":{}}},
      *
      *     @OA\RequestBody(
      *         required=true,
@@ -166,6 +168,7 @@ class EmployeeController extends Controller
      *     tags={"employees"},
      *     summary="Obtener un empleado específico",
      *     description="Obtiene los detalles de un empleado por su ID",
+     *     security={{"bearerAuth":{}}},
      *
      *     @OA\Parameter(
      *         name="id",
@@ -207,6 +210,7 @@ class EmployeeController extends Controller
      *     tags={"employees"},
      *     summary="Actualizar un empleado",
      *     description="Actualiza los datos de un empleado existente",
+     *     security={{"bearerAuth":{}}},
      *
      *     @OA\Parameter(
      *         name="id",
@@ -268,6 +272,7 @@ class EmployeeController extends Controller
      *     tags={"employees"},
      *     summary="Eliminar un empleado",
      *     description="Elimina un empleado del sistema",
+     *     security={{"bearerAuth":{}}},
      *
      *     @OA\Parameter(
      *         name="id",

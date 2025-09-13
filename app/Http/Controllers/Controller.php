@@ -20,6 +20,18 @@ use OpenApi\Annotations as OA;
  *     description="Servidor de desarrollo"
  * )
  *
+ * @OA\SecurityScheme(
+ *     securityScheme="bearerAuth",
+ *     type="http",
+ *     scheme="bearer",
+ *     bearerFormat="JWT",
+ *     description="Autenticación JWT Bearer Token"
+ * )
+ *
+ * @OA\Tag(
+ *     name="auth",
+ *     description="Endpoints para autenticación y autorización"
+ * )
  * @OA\Tag(
  *     name="employees",
  *     description="Operaciones relacionadas con empleados"
