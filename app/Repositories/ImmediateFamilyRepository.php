@@ -19,6 +19,7 @@ class ImmediateFamilyRepository extends BaseRepository
     public function createForEmployee($employeeId, array $data)
     {
         $data['employee_id'] = $employeeId;
+
         return $this->create($data);
     }
 }

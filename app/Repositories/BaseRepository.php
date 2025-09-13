@@ -32,6 +32,7 @@ class BaseRepository
     {
         $record = $this->model->find($id);
         $record->update($data);
+
         return $record;
     }
 

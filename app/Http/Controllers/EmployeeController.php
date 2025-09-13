@@ -29,6 +29,7 @@ class EmployeeController extends Controller
     public function store(Request $request)
     {
         $employee = $this->employeeRepository->create($request->all());
+
         return response()->json($employee, Response::HTTP_CREATED);
     }
 
@@ -38,9 +39,10 @@ class EmployeeController extends Controller
     public function show(string $id)
     {
         $employee = $this->employeeRepository->find($id);
-        if (!$employee) {
+        if (! $employee) {
             return response()->json(['message' => 'Employee not found'], Response::HTTP_NOT_FOUND);
         }
+
         return response()->json($employee);
     }
 
@@ -50,9 +52,10 @@ class EmployeeController extends Controller
     public function update(Request $request, string $id)
     {
         $employee = $this->employeeRepository->update($id, $request->all());
-        if (!$employee) {
+        if (! $employee) {
             return response()->json(['message' => 'Employee not found'], Response::HTTP_NOT_FOUND);
         }
+
         return response()->json($employee);
     }
 
@@ -62,9 +65,10 @@ class EmployeeController extends Controller
     public function destroy(string $id)
     {
         $deleted = $this->employeeRepository->delete($id);
-        if (!$deleted) {
+        if (! $deleted) {
             return response()->json(['message' => 'Employee not found'], Response::HTTP_NOT_FOUND);
         }
+
         return response()->json(null, Response::HTTP_NO_CONTENT);
     }
 }

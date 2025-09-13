@@ -1,10 +1,10 @@
 <?php
 
+use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\HealthController;
+use App\Http\Controllers\ImmediateFamilyController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\HealthController;
-use App\Http\Controllers\EmployeeController;
-use App\Http\Controllers\ImmediateFamilyController;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,12 +28,12 @@ Route::get('/health', [HealthController::class, 'check'])
 
 // API Version 1
 Route::prefix('v1')->group(function () {
-    // EMPLOYEES CRUD 
+    // EMPLOYEES CRUD
     Route::apiResource('employees', EmployeeController::class);
-    
+
     // IMMEDIATE FAMILY CRUD
     Route::apiResource('immediate-family', ImmediateFamilyController::class);
-    
+
     // Get immediate family by employee
     Route::get('employees/{employeeId}/immediate-family', [ImmediateFamilyController::class, 'getByEmployee']);
 });

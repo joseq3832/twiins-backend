@@ -26,11 +26,14 @@ class ImmediateFamilyController extends Controller
      *     path="/api/immediate-family",
      *     summary="Get all immediate family members",
      *     tags={"Immediate Family"},
+     *
      *     @OA\Response(
      *         response=200,
      *         description="List of immediate family members",
+     *
      *         @OA\JsonContent(
      *             type="array",
+     *
      *             @OA\Items(ref="#/components/schemas/ImmediateFamily")
      *         )
      *     )
@@ -39,6 +42,7 @@ class ImmediateFamilyController extends Controller
     public function index()
     {
         $immediateFamily = $this->immediateFamilyRepository->all();
+
         return response()->json($immediateFamily);
     }
 
@@ -47,21 +51,27 @@ class ImmediateFamilyController extends Controller
      *     path="/api/immediate-family",
      *     summary="Create a new immediate family member",
      *     tags={"Immediate Family"},
+     *
      *     @OA\RequestBody(
      *         required=true,
+     *
      *         @OA\JsonContent(
      *             required={"employee_id", "family_name", "relationship", "date_of_birth"},
+     *
      *             @OA\Property(property="employee_id", type="integer", example=1),
      *             @OA\Property(property="family_name", type="string", example="John Doe"),
      *             @OA\Property(property="relationship", type="string", example="spouse"),
      *             @OA\Property(property="date_of_birth", type="string", format="date", example="1990-05-15")
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=201,
      *         description="Immediate family member created successfully",
+     *
      *         @OA\JsonContent(ref="#/components/schemas/ImmediateFamily")
      *     ),
+     *
      *     @OA\Response(
      *         response=422,
      *         description="Validation error"
@@ -78,6 +88,7 @@ class ImmediateFamilyController extends Controller
         ]);
 
         $immediateFamily = $this->immediateFamilyRepository->create($validatedData);
+
         return response()->json($immediateFamily, Response::HTTP_CREATED);
     }
 
@@ -86,17 +97,22 @@ class ImmediateFamilyController extends Controller
      *     path="/api/immediate-family/{id}",
      *     summary="Get immediate family member by ID",
      *     tags={"Immediate Family"},
+     *
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
+     *
      *         @OA\Schema(type="integer")
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Immediate family member details",
+     *
      *         @OA\JsonContent(ref="#/components/schemas/ImmediateFamily")
      *     ),
+     *
      *     @OA\Response(
      *         response=404,
      *         description="Immediate family member not found"
@@ -106,8 +122,8 @@ class ImmediateFamilyController extends Controller
     public function show($id)
     {
         $immediateFamily = $this->immediateFamilyRepository->find($id);
-        
-        if (!$immediateFamily) {
+
+        if (! $immediateFamily) {
             return response()->json(['message' => 'Immediate family member not found'], Response::HTTP_NOT_FOUND);
         }
 
@@ -119,26 +135,34 @@ class ImmediateFamilyController extends Controller
      *     path="/api/immediate-family/{id}",
      *     summary="Update immediate family member",
      *     tags={"Immediate Family"},
+     *
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
+     *
      *         @OA\Schema(type="integer")
      *     ),
+     *
      *     @OA\RequestBody(
      *         required=true,
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="employee_id", type="integer", example=1),
      *             @OA\Property(property="family_name", type="string", example="John Doe"),
      *             @OA\Property(property="relationship", type="string", example="spouse"),
      *             @OA\Property(property="date_of_birth", type="string", format="date", example="1990-05-15")
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Immediate family member updated successfully",
+     *
      *         @OA\JsonContent(ref="#/components/schemas/ImmediateFamily")
      *     ),
+     *
      *     @OA\Response(
      *         response=404,
      *         description="Immediate family member not found"
@@ -152,8 +176,8 @@ class ImmediateFamilyController extends Controller
     public function update(Request $request, $id)
     {
         $immediateFamily = $this->immediateFamilyRepository->find($id);
-        
-        if (!$immediateFamily) {
+
+        if (! $immediateFamily) {
             return response()->json(['message' => 'Immediate family member not found'], Response::HTTP_NOT_FOUND);
         }
 
@@ -165,6 +189,7 @@ class ImmediateFamilyController extends Controller
         ]);
 
         $updatedImmediateFamily = $this->immediateFamilyRepository->update($id, $validatedData);
+
         return response()->json($updatedImmediateFamily);
     }
 
@@ -173,12 +198,15 @@ class ImmediateFamilyController extends Controller
      *     path="/api/immediate-family/{id}",
      *     summary="Delete immediate family member",
      *     tags={"Immediate Family"},
+     *
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
+     *
      *         @OA\Schema(type="integer")
      *     ),
+     *
      *     @OA\Response(
      *         response=204,
      *         description="Immediate family member deleted successfully"
@@ -192,12 +220,13 @@ class ImmediateFamilyController extends Controller
     public function destroy($id)
     {
         $immediateFamily = $this->immediateFamilyRepository->find($id);
-        
-        if (!$immediateFamily) {
+
+        if (! $immediateFamily) {
             return response()->json(['message' => 'Immediate family member not found'], Response::HTTP_NOT_FOUND);
         }
 
         $this->immediateFamilyRepository->delete($id);
+
         return response()->json(null, Response::HTTP_NO_CONTENT);
     }
 
@@ -206,17 +235,22 @@ class ImmediateFamilyController extends Controller
      *     path="/api/employees/{employeeId}/immediate-family",
      *     summary="Get immediate family members by employee ID",
      *     tags={"Immediate Family"},
+     *
      *     @OA\Parameter(
      *         name="employeeId",
      *         in="path",
      *         required=true,
+     *
      *         @OA\Schema(type="integer")
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="List of immediate family members for the employee",
+     *
      *         @OA\JsonContent(
      *             type="array",
+     *
      *             @OA\Items(ref="#/components/schemas/ImmediateFamily")
      *         )
      *     )
@@ -225,6 +259,7 @@ class ImmediateFamilyController extends Controller
     public function getByEmployee($employeeId)
     {
         $immediateFamily = $this->immediateFamilyRepository->getByEmployeeId($employeeId);
+
         return response()->json($immediateFamily);
     }
 }

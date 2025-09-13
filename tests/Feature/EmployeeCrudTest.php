@@ -2,9 +2,9 @@
 
 namespace Tests\Feature;
 
+use App\Models\Employee;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
-use App\Models\Employee;
 
 class EmployeeCrudTest extends TestCase
 {
@@ -16,7 +16,7 @@ class EmployeeCrudTest extends TestCase
         $response = $this->getJson('/api/v1/employees');
         $response->assertStatus(200)
             ->assertJsonStructure([
-                '*' => ['id', 'fullname', 'email', 'position', 'created_at', 'updated_at']
+                '*' => ['id', 'fullname', 'email', 'position', 'created_at', 'updated_at'],
             ]);
     }
 
@@ -25,7 +25,7 @@ class EmployeeCrudTest extends TestCase
         $data = [
             'fullname' => 'Juan Perez',
             'email' => 'juan@example.com',
-            'position' => 'Developer'
+            'position' => 'Developer',
         ];
         $response = $this->postJson('/api/v1/employees', $data);
         $response->assertStatus(201)
@@ -40,7 +40,7 @@ class EmployeeCrudTest extends TestCase
         $response->assertStatus(200)
             ->assertJsonFragment([
                 'id' => $employee->id,
-                'fullname' => $employee->fullname
+                'fullname' => $employee->fullname,
             ]);
     }
 
@@ -50,7 +50,7 @@ class EmployeeCrudTest extends TestCase
         $data = [
             'fullname' => 'Nuevo Nombre',
             'email' => 'nuevo@example.com',
-            'position' => 'Manager'
+            'position' => 'Manager',
         ];
         $response = $this->putJson("/api/v1/employees/{$employee->id}", $data);
         $response->assertStatus(200)

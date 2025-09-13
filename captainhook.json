@@ -1,0 +1,20 @@
+{
+    "commit-msg": {
+        "enabled": false,
+        "actions": []
+    },
+    "pre-commit": {
+        "enabled": true,
+        "actions": [
+            {
+                "action": "\\CaptainHook\\App\\Hook\\PHP\\Action\\Linting"
+            },
+            {
+                "action": "./vendor/bin/pint",
+                "options": {
+                    "config": "pint.json"
+                }
+            }
+        ]
+    }
+}

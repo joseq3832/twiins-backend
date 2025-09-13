@@ -17,7 +17,7 @@ class ImmediateFamilyFactory extends Factory
     public function definition(): array
     {
         $relationships = ['spouse', 'child', 'parent', 'sibling', 'grandparent', 'grandchild'];
-        
+
         return [
             'family_name' => $this->faker->name(),
             'relationship' => $this->faker->randomElement($relationships),

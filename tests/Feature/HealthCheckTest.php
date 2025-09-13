@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -18,31 +17,31 @@ class HealthCheckTest extends TestCase
         $response = $this->getJson('/api/health');
 
         $response->assertStatus(200)
-                 ->assertJsonStructure([
-                     'status',
-                     'timestamp',
-                     'response_time_ms',
-                     'version',
-                     'environment',
-                     'checks' => [
-                         'database' => [
-                             'status',
-                             'message'
-                         ],
-                         'cache' => [
-                             'status',
-                             'message'
-                         ],
-                         'storage' => [
-                             'status',
-                             'message'
-                         ],
-                         'application' => [
-                             'status',
-                             'message'
-                         ]
-                     ]
-                 ]);
+            ->assertJsonStructure([
+                'status',
+                'timestamp',
+                'response_time_ms',
+                'version',
+                'environment',
+                'checks' => [
+                    'database' => [
+                        'status',
+                        'message',
+                    ],
+                    'cache' => [
+                        'status',
+                        'message',
+                    ],
+                    'storage' => [
+                        'status',
+                        'message',
+                    ],
+                    'application' => [
+                        'status',
+                        'message',
+                    ],
+                ],
+            ]);
 
         $this->assertContains($response->json('status'), ['healthy', 'degraded', 'unhealthy']);
     }
@@ -67,9 +66,9 @@ class HealthCheckTest extends TestCase
         $response = $this->getJson('/api/health');
 
         $response->assertStatus(200)
-                 ->assertJsonFragment([
-                     'environment' => config('app.env')
-                 ]);
+            ->assertJsonFragment([
+                'environment' => config('app.env'),
+            ]);
     }
 
     /**
@@ -81,7 +80,7 @@ class HealthCheckTest extends TestCase
 
         $response->assertStatus(200);
         $databaseCheck = $response->json('checks.database');
-        
+
         $this->assertArrayHasKey('status', $databaseCheck);
         $this->assertArrayHasKey('message', $databaseCheck);
         $this->assertContains($databaseCheck['status'], ['healthy', 'degraded', 'unhealthy']);
@@ -96,7 +95,7 @@ class HealthCheckTest extends TestCase
 
         $response->assertStatus(200);
         $cacheCheck = $response->json('checks.cache');
-        
+
         $this->assertArrayHasKey('status', $cacheCheck);
         $this->assertArrayHasKey('message', $cacheCheck);
         $this->assertContains($cacheCheck['status'], ['healthy', 'degraded', 'unhealthy']);
@@ -111,7 +110,7 @@ class HealthCheckTest extends TestCase
 
         $response->assertStatus(200);
         $storageCheck = $response->json('checks.storage');
-        
+
         $this->assertArrayHasKey('status', $storageCheck);
         $this->assertArrayHasKey('message', $storageCheck);
         $this->assertContains($storageCheck['status'], ['healthy', 'degraded', 'unhealthy']);
@@ -126,7 +125,7 @@ class HealthCheckTest extends TestCase
 
         $response->assertStatus(200);
         $appCheck = $response->json('checks.application');
-        
+
         $this->assertArrayHasKey('status', $appCheck);
         $this->assertArrayHasKey('message', $appCheck);
         $this->assertArrayHasKey('php_version', $appCheck);
@@ -142,7 +141,7 @@ class HealthCheckTest extends TestCase
         // Make multiple requests to test throttling
         for ($i = 0; $i < 65; $i++) {
             $response = $this->getJson('/api/health');
-            
+
             if ($i < 60) {
                 $response->assertStatus(200);
             } else {
@@ -160,16 +159,16 @@ class HealthCheckTest extends TestCase
     {
         // Mock database connection failure
         DB::shouldReceive('connection->getPdo')
-          ->andThrow(new \Exception('Database connection failed'));
-        
+            ->andThrow(new \Exception('Database connection failed'));
+
         DB::shouldReceive('select')
-          ->andThrow(new \Exception('Database connection failed'));
+            ->andThrow(new \Exception('Database connection failed'));
 
         $response = $this->getJson('/api/health');
 
         $response->assertStatus(503)
-                 ->assertJsonFragment([
-                     'status' => 'unhealthy'
-                 ]);
+            ->assertJsonFragment([
+                'status' => 'unhealthy',
+            ]);
     }
 }

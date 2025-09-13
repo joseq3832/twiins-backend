@@ -9,6 +9,7 @@ namespace App\Swagger\Schemas;
  *     title="Immediate Family",
  *     description="Immediate Family model",
  *     required={"id", "employee_id", "family_name", "relationship", "date_of_birth"},
+ *
  *     @OA\Property(
  *         property="id",
  *         type="integer",
