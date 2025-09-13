@@ -25,7 +25,8 @@ class ImmediateFamilyCrudTest extends TestCase
     {
         $user = User::factory()->create();
         $token = JWTAuth::fromUser($user);
-        return ['Authorization' => 'Bearer ' . $token];
+
+        return ['Authorization' => 'Bearer '.$token];
     }
 
     public function test_list_immediate_family()
