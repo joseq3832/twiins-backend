@@ -16,11 +16,22 @@ class EmployeeController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
+     * Display a listing of the resource with advanced filtering.
+     * 
+     * Query parameters supported:
+     * - page: Page number for pagination
+     * - limit: Number of items per page
+     * - search: Search term across searchable columns
+     * - sort: Comma-separated list of columns to sort by (prefix with - for desc)
+     * - select: Comma-separated list of columns to select
+     * - include: Comma-separated list of relations to include
+     * - filter[column][$operator]: Filter by column with operator
+     *   Operators: $eq, $not, $null, $in, $gt, $gte, $lt, $lte, $btw, $ilike, $sw, $contains
      */
-    public function index()
+    public function index(Request $request)
     {
-        return response()->json($this->employeeRepository->all());
+        $employees = $this->employeeRepository->filter($request);
+        return response()->json($employees);
     }
 
     /**

@@ -16,7 +16,13 @@ class EmployeeCrudTest extends TestCase
         $response = $this->getJson('/api/v1/employees');
         $response->assertStatus(200)
             ->assertJsonStructure([
-                '*' => ['id', 'name', 'email', 'position', 'created_at', 'updated_at'],
+                'data' => [
+                    '*' => ['id', 'name', 'email', 'position', 'created_at', 'updated_at'],
+                ],
+                'current_page',
+                'total',
+                'per_page',
+                'last_page'
             ]);
     }
 
