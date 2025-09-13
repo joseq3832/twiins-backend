@@ -137,12 +137,12 @@
                                     "email": {
                                         "type": "string",
                                         "format": "email",
-                                        "example": "juan@example.com"
+                                        "example": "admin@admin.com"
                                     },
                                     "password": {
                                         "type": "string",
                                         "format": "password",
-                                        "example": "password123"
+                                        "example": "admin"
                                     }
                                 },
                                 "type": "object"
@@ -381,14 +381,14 @@
                 ]
             }
         },
-        "/employees": {
+        "/v1/employees": {
             "get": {
                 "tags": [
                     "employees"
                 ],
                 "summary": "Listar empleados con filtrado avanzado",
                 "description": "Obtiene una lista paginada de empleados con capacidades de filtrado, búsqueda y ordenamiento avanzadas",
-                "operationId": "2d7067def2c8a5aba470577bb4783b88",
+                "operationId": "c968dead0aad664f05695ae57e9d3e1b",
                 "parameters": [
                     {
                         "name": "page",
@@ -509,7 +509,7 @@
                 ],
                 "summary": "Crear un nuevo empleado",
                 "description": "Crea un nuevo empleado en el sistema",
-                "operationId": "58413e383137427b5eed73f679f84799",
+                "operationId": "84b4f211825ec4935c15f1c609c1d9ac",
                 "requestBody": {
                     "description": "Datos del empleado a crear",
                     "required": true,
@@ -580,14 +580,14 @@
                 ]
             }
         },
-        "/employees/{id}": {
+        "/v1/employees/{id}": {
             "get": {
                 "tags": [
                     "employees"
                 ],
                 "summary": "Obtener un empleado específico",
                 "description": "Obtiene los detalles de un empleado por su ID",
-                "operationId": "44ff69fd7d2a941fa5516675a2ca3a27",
+                "operationId": "6fdbd4266813a6bac69b4371f5559198",
                 "parameters": [
                     {
                         "name": "id",
@@ -634,7 +634,7 @@
                 ],
                 "summary": "Actualizar un empleado",
                 "description": "Actualiza los datos de un empleado existente",
-                "operationId": "ef889c4e99cacdb1052a6ee7d91c034f",
+                "operationId": "530c31c149269f1b0a1887e57a46541d",
                 "parameters": [
                     {
                         "name": "id",
@@ -726,7 +726,7 @@
                 ],
                 "summary": "Eliminar un empleado",
                 "description": "Elimina un empleado del sistema",
-                "operationId": "cab954f1fe072d73d265b988e91a5baf",
+                "operationId": "0802d541c53601e09cd0b503777ff08f",
                 "parameters": [
                     {
                         "name": "id",
@@ -761,14 +761,14 @@
                 ]
             }
         },
-        "/immediate-family": {
+        "/v1/immediate-family": {
             "get": {
                 "tags": [
                     "immediate-family"
                 ],
                 "summary": "Obtener todos los familiares inmediatos",
                 "description": "Obtiene una lista paginada de todos los familiares inmediatos",
-                "operationId": "2a8312c17e02bd8694ac0e9a08801cdf",
+                "operationId": "95d69c9788300520a6323ed51fb7da74",
                 "parameters": [
                     {
                         "name": "page",
@@ -823,7 +823,7 @@
                 ],
                 "summary": "Crear un nuevo familiar inmediato",
                 "description": "Crea un nuevo familiar inmediato para un empleado",
-                "operationId": "c9fa5c1e781d314eb2acf533f2c759e3",
+                "operationId": "557edce8c02a3faa9463712fc898c81d",
                 "requestBody": {
                     "description": "Datos del familiar inmediato a crear",
                     "required": true,
@@ -893,14 +893,14 @@
                 ]
             }
         },
-        "/immediate-family/{id}": {
+        "/v1/immediate-family/{id}": {
             "get": {
                 "tags": [
                     "immediate-family"
                 ],
                 "summary": "Obtener un familiar inmediato específico",
                 "description": "Obtiene los detalles de un familiar inmediato por su ID",
-                "operationId": "647ecdddda812b97348ae49c583db2a6",
+                "operationId": "ffa84d21b8dc652f12fb79a91b63d019",
                 "parameters": [
                     {
                         "name": "id",
@@ -947,7 +947,7 @@
                 ],
                 "summary": "Actualizar un familiar inmediato",
                 "description": "Actualiza los datos de un familiar inmediato existente",
-                "operationId": "75ebdfc3fcd378e2cb38b04ceb1b1df2",
+                "operationId": "69fa35728d6388d31e8ff25907c76398",
                 "parameters": [
                     {
                         "name": "id",
@@ -1038,7 +1038,7 @@
                 ],
                 "summary": "Eliminar un familiar inmediato",
                 "description": "Elimina un familiar inmediato del sistema",
-                "operationId": "850095e03b8d78ff02a800fb94ddf445",
+                "operationId": "360a7ee5fa89ae4785125faf071676cf",
                 "parameters": [
                     {
                         "name": "id",
@@ -1073,14 +1073,14 @@
                 ]
             }
         },
-        "/employees/{employeeId}/immediate-family": {
+        "/v1/employees/{employeeId}/immediate-family": {
             "get": {
                 "tags": [
                     "immediate-family"
                 ],
                 "summary": "Obtener familiares inmediatos por empleado",
                 "description": "Obtiene todos los familiares inmediatos de un empleado específico",
-                "operationId": "28be0cc5301b0dcbfcbdb97f9f222c94",
+                "operationId": "09a00a8061d60c026e5f7a0ceeaa200e",
                 "parameters": [
                     {
                         "name": "employeeId",

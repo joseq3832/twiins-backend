@@ -24,7 +24,7 @@ class ImmediateFamilyController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/immediate-family",
+     *     path="/v1/immediate-family",
      *     tags={"immediate-family"},
      *     summary="Obtener todos los familiares inmediatos",
      *     description="Obtiene una lista paginada de todos los familiares inmediatos",
@@ -70,7 +70,7 @@ class ImmediateFamilyController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/immediate-family",
+     *     path="/v1/immediate-family",
      *     tags={"immediate-family"},
      *     summary="Crear un nuevo familiar inmediato",
      *     description="Crea un nuevo familiar inmediato para un empleado",
@@ -121,7 +121,7 @@ class ImmediateFamilyController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/immediate-family/{id}",
+     *     path="/v1/immediate-family/{id}",
      *     tags={"immediate-family"},
      *     summary="Obtener un familiar inmediato específico",
      *     description="Obtiene los detalles de un familiar inmediato por su ID",
@@ -164,7 +164,7 @@ class ImmediateFamilyController extends Controller
 
     /**
      * @OA\Put(
-     *     path="/immediate-family/{id}",
+     *     path="/v1/immediate-family/{id}",
      *     tags={"immediate-family"},
      *     summary="Actualizar un familiar inmediato",
      *     description="Actualiza los datos de un familiar inmediato existente",
@@ -236,7 +236,7 @@ class ImmediateFamilyController extends Controller
 
     /**
      * @OA\Delete(
-     *     path="/immediate-family/{id}",
+     *     path="/v1/immediate-family/{id}",
      *     tags={"immediate-family"},
      *     summary="Eliminar un familiar inmediato",
      *     description="Elimina un familiar inmediato del sistema",
@@ -278,7 +278,7 @@ class ImmediateFamilyController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/employees/{employeeId}/immediate-family",
+     *     path="/v1/employees/{employeeId}/immediate-family",
      *     tags={"immediate-family"},
      *     summary="Obtener familiares inmediatos por empleado",
      *     description="Obtiene todos los familiares inmediatos de un empleado específico",

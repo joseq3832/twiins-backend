@@ -18,7 +18,7 @@ class EmployeeController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/employees",
+     *     path="/v1/employees",
      *     tags={"employees"},
      *     summary="Listar empleados con filtrado avanzado",
      *     description="Obtiene una lista paginada de empleados con capacidades de filtrado, búsqueda y ordenamiento avanzadas",
@@ -120,7 +120,7 @@ class EmployeeController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/employees",
+     *     path="/v1/employees",
      *     tags={"employees"},
      *     summary="Crear un nuevo empleado",
      *     description="Crea un nuevo empleado en el sistema",
@@ -164,7 +164,7 @@ class EmployeeController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/employees/{id}",
+     *     path="/v1/employees/{id}",
      *     tags={"employees"},
      *     summary="Obtener un empleado específico",
      *     description="Obtiene los detalles de un empleado por su ID",
@@ -206,7 +206,7 @@ class EmployeeController extends Controller
 
     /**
      * @OA\Put(
-     *     path="/employees/{id}",
+     *     path="/v1/employees/{id}",
      *     tags={"employees"},
      *     summary="Actualizar un empleado",
      *     description="Actualiza los datos de un empleado existente",
@@ -268,7 +268,7 @@ class EmployeeController extends Controller
 
     /**
      * @OA\Delete(
-     *     path="/employees/{id}",
+     *     path="/v1/employees/{id}",
      *     tags={"employees"},
      *     summary="Eliminar un empleado",
      *     description="Elimina un empleado del sistema",
