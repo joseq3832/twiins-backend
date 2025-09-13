@@ -6,23 +6,25 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Employee extends Model
+class ImmediateFamily extends Model
 {
     use HasFactory, SoftDeletes;
 
+    protected $table = 'immediate_family';
+
     protected $fillable = [
-        'name',
-        'email',
-        'position',
-        'hire_date',
+        'employee_id',
+        'family_name',
+        'relationship',
+        'date_of_birth',
     ];
 
     protected $casts = [
-        'hire_date' => 'date',
+        'date_of_birth' => 'date',
     ];
 
-    public function immediateFamily()
+    public function employee()
     {
-        return $this->hasMany(ImmediateFamily::class);
+        return $this->belongsTo(Employee::class);
     }
 }

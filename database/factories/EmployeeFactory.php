@@ -17,9 +17,10 @@ class EmployeeFactory extends Factory
     public function definition(): array
     {
         return [
-            'fullname' => $this->faker->name(),
+            'name' => $this->faker->name(),
             'email' => $this->faker->unique()->safeEmail(),
             'position' => $this->faker->jobTitle(),
+            'hire_date' => $this->faker->dateTimeBetween('-5 years', 'now')->format('Y-m-d'),
         ];
     }
 }
