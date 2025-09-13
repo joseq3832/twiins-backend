@@ -1,0 +1,957 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Employee Management API",
+        "description": "API para gestión de empleados y familia inmediata con sistema de filtrado avanzado",
+        "contact": {
+            "email": "admin@example.com"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost/api/v1",
+            "description": "Servidor de desarrollo"
+        }
+    ],
+    "paths": {
+        "/employees": {
+            "get": {
+                "tags": [
+                    "employees"
+                ],
+                "summary": "Listar empleados con filtrado avanzado",
+                "description": "Obtiene una lista paginada de empleados con capacidades de filtrado, búsqueda y ordenamiento avanzadas",
+                "operationId": "2d7067def2c8a5aba470577bb4783b88",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Número de página para paginación",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Número de elementos por página",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "maximum": 100,
+                            "minimum": 1,
+                            "example": 15
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Término de búsqueda en columnas configuradas (name, email, position)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "John"
+                        }
+                    },
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "description": "Columnas para ordenar separadas por comas (usar - para descendente)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "name,-hire_date"
+                        }
+                    },
+                    {
+                        "name": "select",
+                        "in": "query",
+                        "description": "Columnas específicas a seleccionar separadas por comas",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "id,name,email"
+                        }
+                    },
+                    {
+                        "name": "include",
+                        "in": "query",
+                        "description": "Relaciones a incluir separadas por comas",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "immediateFamily"
+                        }
+                    },
+                    {
+                        "name": "filter[position][$eq]",
+                        "in": "query",
+                        "description": "Filtrar por posición exacta",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "Developer"
+                        }
+                    },
+                    {
+                        "name": "filter[hire_date][$gte]",
+                        "in": "query",
+                        "description": "Filtrar por fecha de contratación mayor o igual",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2022-01-01"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de empleados obtenida exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PaginatedEmployeeResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Parámetros de consulta inválidos",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "employees"
+                ],
+                "summary": "Crear un nuevo empleado",
+                "description": "Crea un nuevo empleado en el sistema",
+                "operationId": "58413e383137427b5eed73f679f84799",
+                "requestBody": {
+                    "description": "Datos del empleado a crear",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "position",
+                                    "hire_date"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "description": "Nombre completo del empleado",
+                                        "type": "string",
+                                        "example": "Juan Pérez"
+                                    },
+                                    "email": {
+                                        "description": "Correo electrónico",
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "juan.perez@company.com"
+                                    },
+                                    "position": {
+                                        "description": "Cargo o posición",
+                                        "type": "string",
+                                        "example": "Desarrollador Senior"
+                                    },
+                                    "hire_date": {
+                                        "description": "Fecha de contratación",
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2023-01-15"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Empleado creado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Employee"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Errores de validación",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/employees/{id}": {
+            "get": {
+                "tags": [
+                    "employees"
+                ],
+                "summary": "Obtener un empleado específico",
+                "description": "Obtiene los detalles de un empleado por su ID",
+                "operationId": "44ff69fd7d2a941fa5516675a2ca3a27",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del empleado",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Empleado encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Employee"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Empleado no encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "employees"
+                ],
+                "summary": "Actualizar un empleado",
+                "description": "Actualiza los datos de un empleado existente",
+                "operationId": "ef889c4e99cacdb1052a6ee7d91c034f",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del empleado",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Datos del empleado a actualizar",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "description": "Nombre completo del empleado",
+                                        "type": "string",
+                                        "example": "Juan Pérez"
+                                    },
+                                    "email": {
+                                        "description": "Correo electrónico",
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "juan.perez@company.com"
+                                    },
+                                    "position": {
+                                        "description": "Cargo o posición",
+                                        "type": "string",
+                                        "example": "Desarrollador Senior"
+                                    },
+                                    "hire_date": {
+                                        "description": "Fecha de contratación",
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2023-01-15"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Empleado actualizado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Employee"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Empleado no encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Errores de validación",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "employees"
+                ],
+                "summary": "Eliminar un empleado",
+                "description": "Elimina un empleado del sistema",
+                "operationId": "cab954f1fe072d73d265b988e91a5baf",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del empleado",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Empleado eliminado exitosamente"
+                    },
+                    "404": {
+                        "description": "Empleado no encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/immediate-family": {
+            "get": {
+                "tags": [
+                    "immediate-family"
+                ],
+                "summary": "Obtener todos los familiares inmediatos",
+                "description": "Obtiene una lista paginada de todos los familiares inmediatos",
+                "operationId": "2a8312c17e02bd8694ac0e9a08801cdf",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Número de página",
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Número de elementos por página",
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de familiares inmediatos",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PaginatedImmediateFamilyResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error en los parámetros",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "immediate-family"
+                ],
+                "summary": "Crear un nuevo familiar inmediato",
+                "description": "Crea un nuevo familiar inmediato para un empleado",
+                "operationId": "c9fa5c1e781d314eb2acf533f2c759e3",
+                "requestBody": {
+                    "description": "Datos del familiar inmediato a crear",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "employee_id",
+                                    "relative_name",
+                                    "relationship",
+                                    "birth_date"
+                                ],
+                                "properties": {
+                                    "employee_id": {
+                                        "description": "ID del empleado",
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "relative_name": {
+                                        "description": "Nombre del familiar",
+                                        "type": "string",
+                                        "example": "María García"
+                                    },
+                                    "relationship": {
+                                        "description": "Relación familiar",
+                                        "type": "string",
+                                        "example": "esposa"
+                                    },
+                                    "birth_date": {
+                                        "description": "Fecha de nacimiento",
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "1990-05-15"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Familiar inmediato creado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ImmediateFamily"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Errores de validación",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/immediate-family/{id}": {
+            "get": {
+                "tags": [
+                    "immediate-family"
+                ],
+                "summary": "Obtener un familiar inmediato específico",
+                "description": "Obtiene los detalles de un familiar inmediato por su ID",
+                "operationId": "647ecdddda812b97348ae49c583db2a6",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del familiar inmediato",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Familiar inmediato encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ImmediateFamily"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Familiar inmediato no encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "immediate-family"
+                ],
+                "summary": "Actualizar un familiar inmediato",
+                "description": "Actualiza los datos de un familiar inmediato existente",
+                "operationId": "75ebdfc3fcd378e2cb38b04ceb1b1df2",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del familiar inmediato",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Datos del familiar inmediato a actualizar",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "employee_id": {
+                                        "description": "ID del empleado",
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "relative_name": {
+                                        "description": "Nombre del familiar",
+                                        "type": "string",
+                                        "example": "María García"
+                                    },
+                                    "relationship": {
+                                        "description": "Relación familiar",
+                                        "type": "string",
+                                        "example": "esposa"
+                                    },
+                                    "birth_date": {
+                                        "description": "Fecha de nacimiento",
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "1990-05-15"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Familiar inmediato actualizado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ImmediateFamily"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Familiar inmediato no encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Errores de validación",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "immediate-family"
+                ],
+                "summary": "Eliminar un familiar inmediato",
+                "description": "Elimina un familiar inmediato del sistema",
+                "operationId": "850095e03b8d78ff02a800fb94ddf445",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del familiar inmediato",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Familiar inmediato eliminado exitosamente"
+                    },
+                    "404": {
+                        "description": "Familiar inmediato no encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/employees/{employeeId}/immediate-family": {
+            "get": {
+                "tags": [
+                    "immediate-family"
+                ],
+                "summary": "Obtener familiares inmediatos por empleado",
+                "description": "Obtiene todos los familiares inmediatos de un empleado específico",
+                "operationId": "28be0cc5301b0dcbfcbdb97f9f222c94",
+                "parameters": [
+                    {
+                        "name": "employeeId",
+                        "in": "path",
+                        "description": "ID del empleado",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de familiares inmediatos del empleado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/ImmediateFamily"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Empleado no encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Employee": {
+                "title": "Employee",
+                "description": "Modelo de empleado",
+                "required": [
+                    "name",
+                    "email",
+                    "position",
+                    "hire_date"
+                ],
+                "properties": {
+                    "id": {
+                        "description": "ID único del empleado",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "description": "Nombre completo del empleado",
+                        "type": "string",
+                        "example": "Juan Pérez"
+                    },
+                    "email": {
+                        "description": "Correo electrónico del empleado",
+                        "type": "string",
+                        "format": "email",
+                        "example": "juan.perez@company.com"
+                    },
+                    "position": {
+                        "description": "Cargo o posición del empleado",
+                        "type": "string",
+                        "example": "Desarrollador Senior"
+                    },
+                    "hire_date": {
+                        "description": "Fecha de contratación",
+                        "type": "string",
+                        "format": "date",
+                        "example": "2023-01-15"
+                    },
+                    "created_at": {
+                        "description": "Fecha de creación del registro",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2023-01-15T10:30:00Z"
+                    },
+                    "updated_at": {
+                        "description": "Fecha de última actualización",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2023-01-15T10:30:00Z"
+                    },
+                    "immediate_family": {
+                        "description": "Lista de familiares inmediatos",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ImmediateFamily"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "ImmediateFamily": {
+                "title": "ImmediateFamily",
+                "description": "Modelo de familia inmediata",
+                "required": [
+                    "employee_id",
+                    "relative_name",
+                    "relationship",
+                    "birth_date"
+                ],
+                "properties": {
+                    "id": {
+                        "description": "ID único del familiar",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "employee_id": {
+                        "description": "ID del empleado al que pertenece",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "relative_name": {
+                        "description": "Nombre del familiar",
+                        "type": "string",
+                        "example": "María Pérez"
+                    },
+                    "relationship": {
+                        "description": "Relación con el empleado",
+                        "type": "string",
+                        "enum": [
+                            "spouse",
+                            "child",
+                            "parent",
+                            "sibling"
+                        ],
+                        "example": "spouse"
+                    },
+                    "birth_date": {
+                        "description": "Fecha de nacimiento",
+                        "type": "string",
+                        "format": "date",
+                        "example": "1990-05-20"
+                    },
+                    "created_at": {
+                        "description": "Fecha de creación del registro",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2023-01-15T10:30:00Z"
+                    },
+                    "updated_at": {
+                        "description": "Fecha de última actualización",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2023-01-15T10:30:00Z"
+                    },
+                    "employee": {
+                        "$ref": "#/components/schemas/Employee"
+                    }
+                },
+                "type": "object"
+            },
+            "PaginatedEmployeeResponse": {
+                "title": "PaginatedEmployeeResponse",
+                "description": "Respuesta paginada de empleados",
+                "properties": {
+                    "current_page": {
+                        "description": "Página actual",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "data": {
+                        "description": "Lista de empleados",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Employee"
+                        }
+                    },
+                    "first_page_url": {
+                        "description": "URL de la primera página",
+                        "type": "string",
+                        "example": "http://localhost/api/v1/employees?page=1"
+                    },
+                    "from": {
+                        "description": "Número del primer elemento",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "last_page": {
+                        "description": "Número de la última página",
+                        "type": "integer",
+                        "example": 5
+                    },
+                    "last_page_url": {
+                        "description": "URL de la última página",
+                        "type": "string",
+                        "example": "http://localhost/api/v1/employees?page=5"
+                    },
+                    "next_page_url": {
+                        "description": "URL de la siguiente página",
+                        "type": "string",
+                        "example": "http://localhost/api/v1/employees?page=2",
+                        "nullable": true
+                    },
+                    "path": {
+                        "description": "Ruta base",
+                        "type": "string",
+                        "example": "http://localhost/api/v1/employees"
+                    },
+                    "per_page": {
+                        "description": "Elementos por página",
+                        "type": "integer",
+                        "example": 15
+                    },
+                    "prev_page_url": {
+                        "description": "URL de la página anterior",
+                        "type": "string",
+                        "example": null,
+                        "nullable": true
+                    },
+                    "to": {
+                        "description": "Número del último elemento",
+                        "type": "integer",
+                        "example": 15
+                    },
+                    "total": {
+                        "description": "Total de elementos",
+                        "type": "integer",
+                        "example": 75
+                    }
+                },
+                "type": "object"
+            },
+            "PaginatedImmediateFamilyResponse": {
+                "title": "PaginatedImmediateFamilyResponse",
+                "description": "Respuesta paginada de familia inmediata",
+                "properties": {
+                    "current_page": {
+                        "description": "Página actual",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "data": {
+                        "description": "Lista de familiares",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ImmediateFamily"
+                        }
+                    },
+                    "total": {
+                        "description": "Total de elementos",
+                        "type": "integer",
+                        "example": 25
+                    }
+                },
+                "type": "object"
+            },
+            "ErrorResponse": {
+                "title": "ErrorResponse",
+                "description": "Respuesta de error",
+                "properties": {
+                    "message": {
+                        "description": "Mensaje de error",
+                        "type": "string",
+                        "example": "Recurso no encontrado"
+                    },
+                    "errors": {
+                        "description": "Detalles de errores de validación",
+                        "type": "object",
+                        "example": {
+                            "email": [
+                                "El campo email es requerido"
+                            ]
+                        }
+                    }
+                },
+                "type": "object"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "employees",
+            "description": "Operaciones relacionadas con empleados"
+        },
+        {
+            "name": "immediate-family",
+            "description": "Endpoints para gestionar los familiares inmediatos de los empleados"
+        }
+    ]
+}

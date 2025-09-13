@@ -5,11 +5,12 @@ namespace App\Http\Controllers;
 use App\Repositories\ImmediateFamilyRepository;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use OpenApi\Annotations as OA;
 
 /**
  * @OA\Tag(
- *     name="Immediate Family",
- *     description="API Endpoints for managing employee immediate family members"
+ *     name="immediate-family",
+ *     description="Endpoints para gestionar los familiares inmediatos de los empleados"
  * )
  */
 class ImmediateFamilyController extends Controller
@@ -23,19 +24,31 @@ class ImmediateFamilyController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/api/immediate-family",
-     *     summary="Get all immediate family members",
-     *     tags={"Immediate Family"},
-     *
+     *     path="/immediate-family",
+     *     tags={"immediate-family"},
+     *     summary="Obtener todos los familiares inmediatos",
+     *     description="Obtiene una lista paginada de todos los familiares inmediatos",
+     *     @OA\Parameter(
+     *         name="page",
+     *         in="query",
+     *         description="Número de página",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Parameter(
+     *         name="limit",
+     *         in="query",
+     *         description="Número de elementos por página",
+     *         @OA\Schema(type="integer", example=10)
+     *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="List of immediate family members",
-     *
-     *         @OA\JsonContent(
-     *             type="array",
-     *
-     *             @OA\Items(ref="#/components/schemas/ImmediateFamily")
-     *         )
+     *         description="Lista de familiares inmediatos",
+     *         @OA\JsonContent(ref="#/components/schemas/PaginatedImmediateFamilyResponse")
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Error en los parámetros",
+     *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
      *     )
      * )
      */
@@ -48,33 +61,30 @@ class ImmediateFamilyController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/api/immediate-family",
-     *     summary="Create a new immediate family member",
-     *     tags={"Immediate Family"},
-     *
+     *     path="/immediate-family",
+     *     tags={"immediate-family"},
+     *     summary="Crear un nuevo familiar inmediato",
+     *     description="Crea un nuevo familiar inmediato para un empleado",
      *     @OA\RequestBody(
      *         required=true,
-     *
+     *         description="Datos del familiar inmediato a crear",
      *         @OA\JsonContent(
-     *             required={"employee_id", "family_name", "relationship", "date_of_birth"},
-     *
-     *             @OA\Property(property="employee_id", type="integer", example=1),
-     *             @OA\Property(property="family_name", type="string", example="John Doe"),
-     *             @OA\Property(property="relationship", type="string", example="spouse"),
-     *             @OA\Property(property="date_of_birth", type="string", format="date", example="1990-05-15")
+     *             required={"employee_id", "relative_name", "relationship", "birth_date"},
+     *             @OA\Property(property="employee_id", type="integer", example=1, description="ID del empleado"),
+     *             @OA\Property(property="relative_name", type="string", example="María García", description="Nombre del familiar"),
+     *             @OA\Property(property="relationship", type="string", example="esposa", description="Relación familiar"),
+     *             @OA\Property(property="birth_date", type="string", format="date", example="1990-05-15", description="Fecha de nacimiento")
      *         )
      *     ),
-     *
      *     @OA\Response(
      *         response=201,
-     *         description="Immediate family member created successfully",
-     *
+     *         description="Familiar inmediato creado exitosamente",
      *         @OA\JsonContent(ref="#/components/schemas/ImmediateFamily")
      *     ),
-     *
      *     @OA\Response(
      *         response=422,
-     *         description="Validation error"
+     *         description="Errores de validación",
+     *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
      *     )
      * )
      */
@@ -94,28 +104,26 @@ class ImmediateFamilyController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/api/immediate-family/{id}",
-     *     summary="Get immediate family member by ID",
-     *     tags={"Immediate Family"},
-     *
+     *     path="/immediate-family/{id}",
+     *     tags={"immediate-family"},
+     *     summary="Obtener un familiar inmediato específico",
+     *     description="Obtiene los detalles de un familiar inmediato por su ID",
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
-     *
-     *         @OA\Schema(type="integer")
+     *         description="ID del familiar inmediato",
+     *         @OA\Schema(type="integer", example=1)
      *     ),
-     *
      *     @OA\Response(
      *         response=200,
-     *         description="Immediate family member details",
-     *
+     *         description="Familiar inmediato encontrado",
      *         @OA\JsonContent(ref="#/components/schemas/ImmediateFamily")
      *     ),
-     *
      *     @OA\Response(
      *         response=404,
-     *         description="Immediate family member not found"
+     *         description="Familiar inmediato no encontrado",
+     *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
      *     )
      * )
      */
@@ -132,44 +140,41 @@ class ImmediateFamilyController extends Controller
 
     /**
      * @OA\Put(
-     *     path="/api/immediate-family/{id}",
-     *     summary="Update immediate family member",
-     *     tags={"Immediate Family"},
-     *
+     *     path="/immediate-family/{id}",
+     *     tags={"immediate-family"},
+     *     summary="Actualizar un familiar inmediato",
+     *     description="Actualiza los datos de un familiar inmediato existente",
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
-     *
-     *         @OA\Schema(type="integer")
+     *         description="ID del familiar inmediato",
+     *         @OA\Schema(type="integer", example=1)
      *     ),
-     *
      *     @OA\RequestBody(
      *         required=true,
-     *
+     *         description="Datos del familiar inmediato a actualizar",
      *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="employee_id", type="integer", example=1),
-     *             @OA\Property(property="family_name", type="string", example="John Doe"),
-     *             @OA\Property(property="relationship", type="string", example="spouse"),
-     *             @OA\Property(property="date_of_birth", type="string", format="date", example="1990-05-15")
+     *             @OA\Property(property="employee_id", type="integer", example=1, description="ID del empleado"),
+     *             @OA\Property(property="relative_name", type="string", example="María García", description="Nombre del familiar"),
+     *             @OA\Property(property="relationship", type="string", example="esposa", description="Relación familiar"),
+     *             @OA\Property(property="birth_date", type="string", format="date", example="1990-05-15", description="Fecha de nacimiento")
      *         )
      *     ),
-     *
      *     @OA\Response(
      *         response=200,
-     *         description="Immediate family member updated successfully",
-     *
+     *         description="Familiar inmediato actualizado exitosamente",
      *         @OA\JsonContent(ref="#/components/schemas/ImmediateFamily")
      *     ),
-     *
      *     @OA\Response(
      *         response=404,
-     *         description="Immediate family member not found"
+     *         description="Familiar inmediato no encontrado",
+     *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
      *     ),
      *     @OA\Response(
      *         response=422,
-     *         description="Validation error"
+     *         description="Errores de validación",
+     *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
      *     )
      * )
      */
@@ -195,25 +200,25 @@ class ImmediateFamilyController extends Controller
 
     /**
      * @OA\Delete(
-     *     path="/api/immediate-family/{id}",
-     *     summary="Delete immediate family member",
-     *     tags={"Immediate Family"},
-     *
+     *     path="/immediate-family/{id}",
+     *     tags={"immediate-family"},
+     *     summary="Eliminar un familiar inmediato",
+     *     description="Elimina un familiar inmediato del sistema",
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
-     *
-     *         @OA\Schema(type="integer")
+     *         description="ID del familiar inmediato",
+     *         @OA\Schema(type="integer", example=1)
      *     ),
-     *
      *     @OA\Response(
      *         response=204,
-     *         description="Immediate family member deleted successfully"
+     *         description="Familiar inmediato eliminado exitosamente"
      *     ),
      *     @OA\Response(
      *         response=404,
-     *         description="Immediate family member not found"
+     *         description="Familiar inmediato no encontrado",
+     *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
      *     )
      * )
      */
@@ -232,27 +237,29 @@ class ImmediateFamilyController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/api/employees/{employeeId}/immediate-family",
-     *     summary="Get immediate family members by employee ID",
-     *     tags={"Immediate Family"},
-     *
+     *     path="/employees/{employeeId}/immediate-family",
+     *     tags={"immediate-family"},
+     *     summary="Obtener familiares inmediatos por empleado",
+     *     description="Obtiene todos los familiares inmediatos de un empleado específico",
      *     @OA\Parameter(
      *         name="employeeId",
      *         in="path",
      *         required=true,
-     *
-     *         @OA\Schema(type="integer")
+     *         description="ID del empleado",
+     *         @OA\Schema(type="integer", example=1)
      *     ),
-     *
      *     @OA\Response(
      *         response=200,
-     *         description="List of immediate family members for the employee",
-     *
+     *         description="Lista de familiares inmediatos del empleado",
      *         @OA\JsonContent(
      *             type="array",
-     *
      *             @OA\Items(ref="#/components/schemas/ImmediateFamily")
      *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Empleado no encontrado",
+     *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
      *     )
      * )
      */
