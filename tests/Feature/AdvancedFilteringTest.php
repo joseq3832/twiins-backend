@@ -61,13 +61,13 @@ class AdvancedFilteringTest extends TestCase
         // Test ascending sort
         $request = new Request(['sort' => 'name']);
         $result = $this->employeeRepository->filter($request);
-        $names = array_map(fn($emp) => $emp->name, $result['data']);
+        $names = array_map(fn ($emp) => $emp->name, $result['data']);
         $this->assertEquals(['Alice', 'Bob', 'Charlie'], $names);
 
         // Test descending sort
         $request = new Request(['sort' => '-name']);
         $result = $this->employeeRepository->filter($request);
-        $names = array_map(fn($emp) => $emp->name, $result['data']);
+        $names = array_map(fn ($emp) => $emp->name, $result['data']);
         $this->assertEquals(['Charlie', 'Bob', 'Alice'], $names);
     }
 
