@@ -338,20 +338,20 @@ class EmployeeController extends Controller
             $familyValidationRules = [];
             foreach ($request->input('immediate_family', []) as $index => $familyMember) {
                 // Only require fields if not deleting
-                if (!isset($familyMember['_delete']) || !$familyMember['_delete']) {
+                if (! isset($familyMember['_delete']) || ! $familyMember['_delete']) {
                     $familyValidationRules["immediate_family.{$index}.family_name"] = 'required|string|max:255';
                     $familyValidationRules["immediate_family.{$index}.relationship"] = 'required|string|max:255';
                     $familyValidationRules["immediate_family.{$index}.date_of_birth"] = 'required|date';
                 }
             }
-            
-            if (!empty($familyValidationRules)) {
+
+            if (! empty($familyValidationRules)) {
                 $request->validate($familyValidationRules);
             }
         }
 
         $validatedData = $request->only([
-            'name', 'email', 'position', 'hire_date', 'immediate_family'
+            'name', 'email', 'position', 'hire_date', 'immediate_family',
         ]);
 
         DB::beginTransaction();
