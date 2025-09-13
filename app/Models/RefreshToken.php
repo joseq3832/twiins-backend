@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Carbon\Carbon;
 
 class RefreshToken extends Model
 {
@@ -34,7 +33,7 @@ class RefreshToken extends Model
 
     public function isValid(): bool
     {
-        return !$this->is_revoked && !$this->isExpired();
+        return ! $this->is_revoked && ! $this->isExpired();
     }
 
     public function revoke(): void

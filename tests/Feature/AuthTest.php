@@ -5,8 +5,8 @@ namespace Tests\Feature;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Tests\TestCase;
 use Illuminate\Support\Facades\Hash;
+use Tests\TestCase;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthTest extends TestCase
@@ -28,18 +28,18 @@ class AuthTest extends TestCase
         $response = $this->postJson('/api/auth/register', $userData);
 
         $response->assertStatus(201)
-                 ->assertJsonStructure([
-                     'message',
-                     'user' => ['id', 'name', 'email'],
-                     'access_token',
-                     'refresh_token',
-                     'token_type',
-                     'expires_in'
-                 ]);
+            ->assertJsonStructure([
+                'message',
+                'user' => ['id', 'name', 'email'],
+                'access_token',
+                'refresh_token',
+                'token_type',
+                'expires_in',
+            ]);
 
         $this->assertDatabaseHas('users', [
             'email' => $userData['email'],
-            'name' => $userData['name']
+            'name' => $userData['name'],
         ]);
     }
 
@@ -50,25 +50,25 @@ class AuthTest extends TestCase
     {
         $user = User::factory()->create([
             'email' => 'test@example.com',
-            'password' => Hash::make('password123')
+            'password' => Hash::make('password123'),
         ]);
 
         $loginData = [
             'email' => 'test@example.com',
-            'password' => 'password123'
+            'password' => 'password123',
         ];
 
         $response = $this->postJson('/api/auth/login', $loginData);
 
         $response->assertStatus(200)
-                 ->assertJsonStructure([
-                     'message',
-                     'user' => ['id', 'name', 'email'],
-                     'access_token',
-                     'refresh_token',
-                     'token_type',
-                     'expires_in'
-                 ]);
+            ->assertJsonStructure([
+                'message',
+                'user' => ['id', 'name', 'email'],
+                'access_token',
+                'refresh_token',
+                'token_type',
+                'expires_in',
+            ]);
     }
 
     /**
@@ -78,20 +78,20 @@ class AuthTest extends TestCase
     {
         $user = User::factory()->create([
             'email' => 'test@example.com',
-            'password' => Hash::make('password123')
+            'password' => Hash::make('password123'),
         ]);
 
         $loginData = [
             'email' => 'test@example.com',
-            'password' => 'wrongpassword'
+            'password' => 'wrongpassword',
         ];
 
         $response = $this->postJson('/api/auth/login', $loginData);
 
         $response->assertStatus(401)
-                 ->assertJson([
-                     'message' => 'Credenciales inválidas'
-                 ]);
+            ->assertJson([
+                'message' => 'Credenciales inválidas',
+            ]);
     }
 
     /**
@@ -103,13 +103,13 @@ class AuthTest extends TestCase
         $token = JWTAuth::fromUser($user);
 
         $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $token,
+            'Authorization' => 'Bearer '.$token,
         ])->getJson('/api/auth/me');
 
         $response->assertStatus(200)
-                 ->assertJsonStructure([
-                     'user' => ['id', 'name', 'email']
-                 ]);
+            ->assertJsonStructure([
+                'user' => ['id', 'name', 'email'],
+            ]);
     }
 
     /**
@@ -120,9 +120,9 @@ class AuthTest extends TestCase
         $response = $this->getJson('/api/auth/me');
 
         $response->assertStatus(401)
-                 ->assertJson([
-                     'message' => 'Unauthenticated.'
-                 ]);
+            ->assertJson([
+                'message' => 'Unauthenticated.',
+            ]);
     }
 
     /**
@@ -132,27 +132,27 @@ class AuthTest extends TestCase
     {
         $user = User::factory()->create();
         $token = JWTAuth::fromUser($user);
-        
+
         // Crear un refresh token manualmente para el test
         $refreshToken = $user->refreshTokens()->create([
             'token' => bin2hex(random_bytes(32)),
             'expires_at' => now()->addDays(30),
             'user_agent' => 'Test Agent',
-            'ip_address' => '127.0.0.1'
+            'ip_address' => '127.0.0.1',
         ]);
 
         $response = $this->postJson('/api/auth/refresh', [
-            'refresh_token' => $refreshToken->token
+            'refresh_token' => $refreshToken->token,
         ]);
 
         $response->assertStatus(200)
-                 ->assertJsonStructure([
-                     'message',
-                     'access_token',
-                     'refresh_token',
-                     'token_type',
-                     'expires_in'
-                 ]);
+            ->assertJsonStructure([
+                'message',
+                'access_token',
+                'refresh_token',
+                'token_type',
+                'expires_in',
+            ]);
     }
 
     /**
@@ -164,13 +164,13 @@ class AuthTest extends TestCase
         $token = JWTAuth::fromUser($user);
 
         $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $token,
+            'Authorization' => 'Bearer '.$token,
         ])->postJson('/api/auth/logout');
 
         $response->assertStatus(200)
-                 ->assertJson([
-                     'message' => 'Logout exitoso'
-                 ]);
+            ->assertJson([
+                'message' => 'Logout exitoso',
+            ]);
     }
 
     /**
@@ -181,7 +181,7 @@ class AuthTest extends TestCase
         $response = $this->postJson('/api/auth/register', []);
 
         $response->assertStatus(422)
-                 ->assertJsonValidationErrors(['name', 'email', 'password']);
+            ->assertJsonValidationErrors(['name', 'email', 'password']);
     }
 
     /**
@@ -192,6 +192,6 @@ class AuthTest extends TestCase
         $response = $this->postJson('/api/auth/login', []);
 
         $response->assertStatus(422)
-                 ->assertJsonValidationErrors(['email', 'password']);
+            ->assertJsonValidationErrors(['email', 'password']);
     }
 }

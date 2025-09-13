@@ -2,18 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use App\Models\RefreshToken;
+use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
-use Tymon\JWTAuth\Facades\JWTAuth;
-use Tymon\JWTAuth\Exceptions\JWTException;
-use Carbon\Carbon;
 use OpenApi\Annotations as OA;
+use Tymon\JWTAuth\Exceptions\JWTException;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 /**
  * @OA\Tag(
@@ -29,20 +29,26 @@ class AuthController extends Controller
      *     tags={"auth"},
      *     summary="Registrar nuevo usuario",
      *     description="Registra un nuevo usuario en el sistema",
+     *
      *     @OA\RequestBody(
      *         required=true,
+     *
      *         @OA\JsonContent(
      *             required={"name", "email", "password", "password_confirmation"},
+     *
      *             @OA\Property(property="name", type="string", example="Juan Pérez"),
      *             @OA\Property(property="email", type="string", format="email", example="juan@example.com"),
      *             @OA\Property(property="password", type="string", format="password", example="password123"),
      *             @OA\Property(property="password_confirmation", type="string", format="password", example="password123")
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=201,
      *         description="Usuario registrado exitosamente",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="message", type="string", example="Usuario registrado exitosamente"),
      *             @OA\Property(property="user", ref="#/components/schemas/User"),
      *             @OA\Property(property="access_token", type="string"),
@@ -51,10 +57,13 @@ class AuthController extends Controller
      *             @OA\Property(property="expires_in", type="integer", example=3600)
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=422,
      *         description="Errores de validación",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="message", type="string", example="Los datos proporcionados no son válidos."),
      *             @OA\Property(property="errors", type="object")
      *         )
@@ -72,7 +81,7 @@ class AuthController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'message' => 'Los datos proporcionados no son válidos.',
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
@@ -91,7 +100,7 @@ class AuthController extends Controller
             'access_token' => $token,
             'refresh_token' => $refreshToken->token,
             'token_type' => 'bearer',
-            'expires_in' => config('jwt.ttl') * 60
+            'expires_in' => config('jwt.ttl') * 60,
         ], Response::HTTP_CREATED);
     }
 
@@ -101,18 +110,24 @@ class AuthController extends Controller
      *     tags={"auth"},
      *     summary="Iniciar sesión",
      *     description="Autentica un usuario y devuelve tokens de acceso",
+     *
      *     @OA\RequestBody(
      *         required=true,
+     *
      *         @OA\JsonContent(
      *             required={"email", "password"},
+     *
      *             @OA\Property(property="email", type="string", format="email", example="juan@example.com"),
      *             @OA\Property(property="password", type="string", format="password", example="password123")
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Login exitoso",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="message", type="string", example="Login exitoso"),
      *             @OA\Property(property="user", ref="#/components/schemas/User"),
      *             @OA\Property(property="access_token", type="string"),
@@ -121,10 +136,13 @@ class AuthController extends Controller
      *             @OA\Property(property="expires_in", type="integer", example=3600)
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=401,
      *         description="Credenciales inválidas",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="message", type="string", example="Credenciales inválidas")
      *         )
      *     )
@@ -140,21 +158,21 @@ class AuthController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'message' => 'Los datos proporcionados no son válidos.',
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         $credentials = $request->only('email', 'password');
 
         try {
-            if (!$token = JWTAuth::attempt($credentials)) {
+            if (! $token = JWTAuth::attempt($credentials)) {
                 return response()->json([
-                    'message' => 'Credenciales inválidas'
+                    'message' => 'Credenciales inválidas',
                 ], Response::HTTP_UNAUTHORIZED);
             }
         } catch (JWTException $e) {
             return response()->json([
-                'message' => 'No se pudo crear el token'
+                'message' => 'No se pudo crear el token',
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
@@ -167,7 +185,7 @@ class AuthController extends Controller
             'access_token' => $token,
             'refresh_token' => $refreshToken->token,
             'token_type' => 'bearer',
-            'expires_in' => config('jwt.ttl') * 60
+            'expires_in' => config('jwt.ttl') * 60,
         ]);
     }
 
@@ -178,17 +196,23 @@ class AuthController extends Controller
      *     summary="Renovar token de acceso",
      *     description="Renueva el token de acceso usando el refresh token",
      *     security={{"bearerAuth":{}}},
+     *
      *     @OA\RequestBody(
      *         required=true,
+     *
      *         @OA\JsonContent(
      *             required={"refresh_token"},
+     *
      *             @OA\Property(property="refresh_token", type="string")
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Token renovado exitosamente",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="message", type="string", example="Token renovado exitosamente"),
      *             @OA\Property(property="access_token", type="string"),
      *             @OA\Property(property="refresh_token", type="string"),
@@ -196,10 +220,13 @@ class AuthController extends Controller
      *             @OA\Property(property="expires_in", type="integer", example=3600)
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=401,
      *         description="Refresh token inválido o expirado",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="message", type="string", example="Refresh token inválido o expirado")
      *         )
      *     )
@@ -214,21 +241,21 @@ class AuthController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'message' => 'Refresh token requerido',
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         $refreshToken = RefreshToken::where('token', $request->refresh_token)->first();
 
-        if (!$refreshToken || !$refreshToken->isValid()) {
+        if (! $refreshToken || ! $refreshToken->isValid()) {
             return response()->json([
-                'message' => 'Refresh token inválido o expirado'
+                'message' => 'Refresh token inválido o expirado',
             ], Response::HTTP_UNAUTHORIZED);
         }
 
         $user = $refreshToken->user;
         $newAccessToken = JWTAuth::fromUser($user);
-        
+
         // Revocar el refresh token actual y crear uno nuevo
         $refreshToken->revoke();
         $newRefreshToken = $this->createRefreshToken($user, $request);
@@ -238,7 +265,7 @@ class AuthController extends Controller
             'access_token' => $newAccessToken,
             'refresh_token' => $newRefreshToken->token,
             'token_type' => 'bearer',
-            'expires_in' => config('jwt.ttl') * 60
+            'expires_in' => config('jwt.ttl') * 60,
         ]);
     }
 
@@ -249,17 +276,23 @@ class AuthController extends Controller
      *     summary="Cerrar sesión",
      *     description="Cierra la sesión del usuario y revoca todos sus tokens",
      *     security={{"bearerAuth":{}}},
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Logout exitoso",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="message", type="string", example="Logout exitoso")
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=401,
      *         description="No autorizado",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="message", type="string", example="No autorizado")
      *         )
      *     )
@@ -269,19 +302,19 @@ class AuthController extends Controller
     {
         try {
             $user = Auth::user();
-            
+
             // Revocar todos los refresh tokens del usuario
             $user->revokeAllRefreshTokens();
-            
+
             // Invalidar el token JWT actual
             JWTAuth::invalidate(JWTAuth::getToken());
 
             return response()->json([
-                'message' => 'Logout exitoso'
+                'message' => 'Logout exitoso',
             ]);
         } catch (JWTException $e) {
             return response()->json([
-                'message' => 'Error al cerrar sesión'
+                'message' => 'Error al cerrar sesión',
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
@@ -293,17 +326,23 @@ class AuthController extends Controller
      *     summary="Obtener información del usuario autenticado",
      *     description="Devuelve la información del usuario actualmente autenticado",
      *     security={{"bearerAuth":{}}},
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Información del usuario",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="user", ref="#/components/schemas/User")
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=401,
      *         description="No autorizado",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="message", type="string", example="No autorizado")
      *         )
      *     )
@@ -312,7 +351,7 @@ class AuthController extends Controller
     public function me()
     {
         return response()->json([
-            'user' => Auth::user()
+            'user' => Auth::user(),
         ]);
     }
 
