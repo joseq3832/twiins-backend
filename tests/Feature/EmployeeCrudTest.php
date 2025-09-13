@@ -16,20 +16,25 @@ class EmployeeCrudTest extends TestCase
         $response = $this->getJson('/api/v1/employees');
         $response->assertStatus(200)
             ->assertJsonStructure([
-                '*' => ['id', 'fullname', 'email', 'position', 'created_at', 'updated_at'],
+                '*' => ['id', 'name', 'email', 'position', 'created_at', 'updated_at'],
             ]);
     }
 
     public function test_create_employee()
     {
         $data = [
-            'fullname' => 'Juan Perez',
+            'name' => 'Juan Perez',
             'email' => 'juan@example.com',
             'position' => 'Developer',
+            'hire_date' => '2023-01-15',
         ];
         $response = $this->postJson('/api/v1/employees', $data);
         $response->assertStatus(201)
-            ->assertJsonFragment($data);
+            ->assertJsonFragment([
+                'name' => 'Juan Perez',
+                'email' => 'juan@example.com',
+                'position' => 'Developer',
+            ]);
         $this->assertDatabaseHas('employees', $data);
     }
 
@@ -40,7 +45,7 @@ class EmployeeCrudTest extends TestCase
         $response->assertStatus(200)
             ->assertJsonFragment([
                 'id' => $employee->id,
-                'fullname' => $employee->fullname,
+                'name' => $employee->name,
             ]);
     }
 
@@ -48,7 +53,7 @@ class EmployeeCrudTest extends TestCase
     {
         $employee = Employee::factory()->create();
         $data = [
-            'fullname' => 'Nuevo Nombre',
+            'name' => 'Nuevo Nombre',
             'email' => 'nuevo@example.com',
             'position' => 'Manager',
         ];
