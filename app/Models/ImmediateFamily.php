@@ -23,6 +23,10 @@ class ImmediateFamily extends Model
         'date_of_birth' => 'date',
     ];
 
+    protected $hidden = [
+        'deleted_at',
+    ];
+
     public function employee()
     {
         return $this->belongsTo(Employee::class);

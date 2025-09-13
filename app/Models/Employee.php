@@ -21,6 +21,10 @@ class Employee extends Model
         'hire_date' => 'date',
     ];
 
+    protected $hidden = [
+        'deleted_at',
+    ];
+
     public function immediateFamily()
     {
         return $this->hasMany(ImmediateFamily::class);
