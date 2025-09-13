@@ -180,8 +180,6 @@ class AuthController extends Controller
         $refreshToken = $this->createRefreshToken($user, $request);
 
         return response()->json([
-            'message' => 'Login exitoso',
-            'user' => $user,
             'access_token' => $token,
             'refresh_token' => $refreshToken->token,
             'token_type' => 'bearer',
@@ -261,7 +259,6 @@ class AuthController extends Controller
         $newRefreshToken = $this->createRefreshToken($user, $request);
 
         return response()->json([
-            'message' => 'Token renovado exitosamente',
             'access_token' => $newAccessToken,
             'refresh_token' => $newRefreshToken->token,
             'token_type' => 'bearer',

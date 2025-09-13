@@ -4,8 +4,10 @@ namespace Tests\Feature;
 
 use App\Models\Employee;
 use App\Models\ImmediateFamily;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class ImmediateFamilyCrudTest extends TestCase
 {
@@ -19,6 +21,13 @@ class ImmediateFamilyCrudTest extends TestCase
         $this->employee = Employee::factory()->create();
     }
 
+    protected function authenticatedHeaders()
+    {
+        $user = User::factory()->create();
+        $token = JWTAuth::fromUser($user);
+        return ['Authorization' => 'Bearer ' . $token];
+    }
+
     public function test_list_immediate_family()
     {
         // Create some immediate family members
@@ -26,7 +35,8 @@ class ImmediateFamilyCrudTest extends TestCase
             'employee_id' => $this->employee->id,
         ]);
 
-        $response = $this->getJson('/api/v1/immediate-family');
+        $response = $this->withHeaders($this->authenticatedHeaders())
+            ->getJson('/api/v1/immediate-family');
 
         $response->assertStatus(200)
             ->assertJsonCount(3);
@@ -41,7 +51,8 @@ class ImmediateFamilyCrudTest extends TestCase
             'date_of_birth' => '1990-05-15',
         ];
 
-        $response = $this->postJson('/api/v1/immediate-family', $immediateFamilyData);
+        $response = $this->withHeaders($this->authenticatedHeaders())
+            ->postJson('/api/v1/immediate-family', $immediateFamilyData);
 
         $response->assertStatus(201)
             ->assertJson([
@@ -62,7 +73,8 @@ class ImmediateFamilyCrudTest extends TestCase
             'employee_id' => $this->employee->id,
         ]);
 
-        $response = $this->getJson('/api/v1/immediate-family/'.$immediateFamily->id);
+        $response = $this->withHeaders($this->authenticatedHeaders())
+            ->getJson('/api/v1/immediate-family/'.$immediateFamily->id);
 
         $response->assertStatus(200)
             ->assertJson([
@@ -85,7 +97,8 @@ class ImmediateFamilyCrudTest extends TestCase
             'date_of_birth' => '2010-03-20',
         ];
 
-        $response = $this->putJson('/api/v1/immediate-family/'.$immediateFamily->id, $updateData);
+        $response = $this->withHeaders($this->authenticatedHeaders())
+            ->putJson('/api/v1/immediate-family/'.$immediateFamily->id, $updateData);
 
         $response->assertStatus(200)
             ->assertJson([
@@ -110,7 +123,8 @@ class ImmediateFamilyCrudTest extends TestCase
             'employee_id' => $this->employee->id,
         ]);
 
-        $response = $this->deleteJson('/api/v1/immediate-family/'.$immediateFamily->id);
+        $response = $this->withHeaders($this->authenticatedHeaders())
+            ->deleteJson('/api/v1/immediate-family/'.$immediateFamily->id);
 
         $response->assertStatus(204);
 
@@ -132,7 +146,8 @@ class ImmediateFamilyCrudTest extends TestCase
             'employee_id' => $anotherEmployee->id,
         ]);
 
-        $response = $this->getJson('/api/v1/employees/'.$this->employee->id.'/immediate-family');
+        $response = $this->withHeaders($this->authenticatedHeaders())
+            ->getJson('/api/v1/employees/'.$this->employee->id.'/immediate-family');
 
         $response->assertStatus(200)
             ->assertJsonCount(2);
@@ -147,11 +162,13 @@ class ImmediateFamilyCrudTest extends TestCase
     public function test_create_immediate_family_validation_errors()
     {
         // Test missing required fields
-        $response = $this->postJson('/api/v1/immediate-family', []);
+        $response = $this->withHeaders($this->authenticatedHeaders())
+            ->postJson('/api/v1/immediate-family', []);
         $response->assertStatus(422);
 
         // Test invalid employee_id
-        $response = $this->postJson('/api/v1/immediate-family', [
+        $response = $this->withHeaders($this->authenticatedHeaders())
+            ->postJson('/api/v1/immediate-family', [
             'employee_id' => 999999,
             'family_name' => 'John Doe',
             'relationship' => 'spouse',
@@ -160,7 +177,8 @@ class ImmediateFamilyCrudTest extends TestCase
         $response->assertStatus(422);
 
         // Test invalid date format
-        $response = $this->postJson('/api/v1/immediate-family', [
+        $response = $this->withHeaders($this->authenticatedHeaders())
+            ->postJson('/api/v1/immediate-family', [
             'employee_id' => $this->employee->id,
             'family_name' => 'John Doe',
             'relationship' => 'spouse',
@@ -171,13 +189,15 @@ class ImmediateFamilyCrudTest extends TestCase
 
     public function test_show_nonexistent_immediate_family()
     {
-        $response = $this->getJson('/api/v1/immediate-family/999999');
+        $response = $this->withHeaders($this->authenticatedHeaders())
+            ->getJson('/api/v1/immediate-family/999999');
         $response->assertStatus(404);
     }
 
     public function test_update_nonexistent_immediate_family()
     {
-        $response = $this->putJson('/api/v1/immediate-family/999999', [
+        $response = $this->withHeaders($this->authenticatedHeaders())
+            ->putJson('/api/v1/immediate-family/999999', [
             'family_name' => 'Test Name',
         ]);
         $response->assertStatus(404);
@@ -185,7 +205,8 @@ class ImmediateFamilyCrudTest extends TestCase
 
     public function test_delete_nonexistent_immediate_family()
     {
-        $response = $this->deleteJson('/api/v1/immediate-family/999999');
+        $response = $this->withHeaders($this->authenticatedHeaders())
+            ->deleteJson('/api/v1/immediate-family/999999');
         $response->assertStatus(404);
     }
 }

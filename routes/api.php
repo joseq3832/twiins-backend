@@ -41,8 +41,8 @@ Route::prefix('auth')->group(function () {
 
 // API Version 1
 Route::prefix('v1')->group(function () {
-    // EMPLOYEES CRUD - Protected routes
     Route::middleware('auth:api')->group(function () {
+        // EMPLOYEES CRUD - Protected routes
         Route::apiResource('employees', EmployeeController::class);
         Route::apiResource('immediate-family', ImmediateFamilyController::class);
         Route::get('employees/{employeeId}/immediate-family', [ImmediateFamilyController::class, 'getByEmployee']);
