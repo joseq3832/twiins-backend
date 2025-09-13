@@ -2,19 +2,23 @@
 
 namespace App\Repositories;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Str;
 
 class BaseRepository
 {
     protected Model $model;
+
     protected array $searchableColumns = [];
+
     protected array $filterableColumns = [];
+
     protected array $sortableColumns = [];
+
     protected array $selectableColumns = [];
+
     protected array $includableRelations = [];
 
     public function __construct(Model $model)
@@ -86,14 +90,14 @@ class BaseRepository
         if ($select && is_string($select)) {
             $columns = array_map('trim', explode(',', $select));
             $allowedColumns = empty($this->selectableColumns) ? ['*'] : $this->selectableColumns;
-            
+
             if ($allowedColumns !== ['*']) {
                 $columns = array_intersect($columns, $allowedColumns);
             }
-            
-            if (!empty($columns)) {
+
+            if (! empty($columns)) {
                 // Always include the primary key
-                if (!in_array('id', $columns)) {
+                if (! in_array('id', $columns)) {
                     $columns[] = 'id';
                 }
                 $query->select($columns);
@@ -110,12 +114,12 @@ class BaseRepository
         if ($include && is_string($include)) {
             $relations = array_map('trim', explode(',', $include));
             $allowedRelations = $this->includableRelations;
-            
-            if (!empty($allowedRelations)) {
+
+            if (! empty($allowedRelations)) {
                 $relations = array_intersect($relations, $allowedRelations);
             }
-            
-            if (!empty($relations)) {
+
+            if (! empty($relations)) {
                 $query->with($relations);
             }
         }
@@ -127,7 +131,7 @@ class BaseRepository
     protected function applySearch(Builder $query, Request $request): void
     {
         $search = $request->get('search');
-        if ($search && !empty($this->searchableColumns)) {
+        if ($search && ! empty($this->searchableColumns)) {
             $query->where(function ($q) use ($search) {
                 foreach ($this->searchableColumns as $column) {
                     $q->orWhere($column, 'LIKE', "%{$search}%");
@@ -143,19 +147,20 @@ class BaseRepository
     protected function applyFilters(Builder $query, Request $request): void
     {
         $filters = $request->get('filter', []);
-        if (!is_array($filters)) {
+        if (! is_array($filters)) {
             return;
         }
 
         foreach ($filters as $field => $conditions) {
             // Skip if field is not filterable
-            if (!empty($this->filterableColumns) && !in_array($field, $this->filterableColumns)) {
+            if (! empty($this->filterableColumns) && ! in_array($field, $this->filterableColumns)) {
                 continue;
             }
 
-            if (!is_array($conditions)) {
+            if (! is_array($conditions)) {
                 // Simple equality filter
                 $query->where($field, $conditions);
+
                 continue;
             }
 
@@ -226,14 +231,14 @@ class BaseRepository
         $sort = $request->get('sort');
         if ($sort && is_string($sort)) {
             $sortFields = array_map('trim', explode(',', $sort));
-            
+
             foreach ($sortFields as $sortField) {
                 $direction = 'asc';
                 if (str_starts_with($sortField, '-')) {
                     $direction = 'desc';
                     $sortField = substr($sortField, 1);
                 }
-                
+
                 // Check if field is sortable
                 if (empty($this->sortableColumns) || in_array($sortField, $this->sortableColumns)) {
                     $query->orderBy($sortField, $direction);
@@ -249,7 +254,7 @@ class BaseRepository
     {
         $page = max(1, (int) $request->get('page', 1));
         $limit = min(100, max(1, (int) $request->get('limit', 15)));
-        
+
         return $query->paginate($limit, ['*'], 'page', $page);
     }
 
@@ -259,6 +264,7 @@ class BaseRepository
     public function setSearchableColumns(array $columns): self
     {
         $this->searchableColumns = $columns;
+
         return $this;
     }
 
@@ -268,6 +274,7 @@ class BaseRepository
     public function setFilterableColumns(array $columns): self
     {
         $this->filterableColumns = $columns;
+
         return $this;
     }
 
@@ -277,6 +284,7 @@ class BaseRepository
     public function setSortableColumns(array $columns): self
     {
         $this->sortableColumns = $columns;
+
         return $this;
     }
 
@@ -286,6 +294,7 @@ class BaseRepository
     public function setSelectableColumns(array $columns): self
     {
         $this->selectableColumns = $columns;
+
         return $this;
     }
 
@@ -295,6 +304,7 @@ class BaseRepository
     public function setIncludableRelations(array $relations): self
     {
         $this->includableRelations = $relations;
+
         return $this;
     }
 }

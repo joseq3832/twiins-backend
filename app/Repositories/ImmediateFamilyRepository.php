@@ -9,13 +9,13 @@ class ImmediateFamilyRepository extends BaseRepository
     public function __construct(ImmediateFamily $model)
     {
         parent::__construct($model);
-        
+
         // Configure searchable columns
         $this->setSearchableColumns([
             'relative_name',
-            'relationship'
+            'relationship',
         ]);
-        
+
         // Configure filterable columns
         $this->setFilterableColumns([
             'id',
@@ -24,9 +24,9 @@ class ImmediateFamilyRepository extends BaseRepository
             'relationship',
             'birth_date',
             'created_at',
-            'updated_at'
+            'updated_at',
         ]);
-        
+
         // Configure sortable columns
         $this->setSortableColumns([
             'id',
@@ -35,9 +35,9 @@ class ImmediateFamilyRepository extends BaseRepository
             'relationship',
             'birth_date',
             'created_at',
-            'updated_at'
+            'updated_at',
         ]);
-        
+
         // Configure selectable columns
         $this->setSelectableColumns([
             'id',
@@ -46,12 +46,12 @@ class ImmediateFamilyRepository extends BaseRepository
             'relationship',
             'birth_date',
             'created_at',
-            'updated_at'
+            'updated_at',
         ]);
-        
+
         // Configure includable relations
         $this->setIncludableRelations([
-            'employee'
+            'employee',
         ]);
     }
 

@@ -22,7 +22,7 @@ class EmployeeCrudTest extends TestCase
                 'current_page',
                 'total',
                 'per_page',
-                'last_page'
+                'last_page',
             ]);
     }
 

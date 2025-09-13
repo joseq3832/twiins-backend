@@ -17,7 +17,7 @@ class EmployeeController extends Controller
 
     /**
      * Display a listing of the resource with advanced filtering.
-     * 
+     *
      * Query parameters supported:
      * - page: Page number for pagination
      * - limit: Number of items per page
@@ -31,6 +31,7 @@ class EmployeeController extends Controller
     public function index(Request $request)
     {
         $employees = $this->employeeRepository->filter($request);
+
         return response()->json($employees);
     }
 

@@ -28,7 +28,7 @@ class AdvancedFilteringTest extends TestCase
 
         $request = new Request([
             'page' => 1,
-            'limit' => 10
+            'limit' => 10,
         ]);
 
         $result = $this->employeeRepository->filter($request);
@@ -80,7 +80,7 @@ class AdvancedFilteringTest extends TestCase
 
         $request = new Request(['sort' => 'position,-name']);
         $result = $this->employeeRepository->filter($request);
-        $data = $result->map(fn($emp) => $emp->position . ':' . $emp->name)->toArray();
+        $data = $result->map(fn ($emp) => $emp->position.':'.$emp->name)->toArray();
         $this->assertEquals(['Developer:Bob', 'Developer:Alice', 'Manager:Charlie'], $data);
     }
 
@@ -105,8 +105,8 @@ class AdvancedFilteringTest extends TestCase
 
         $request = new Request([
             'filter' => [
-                'position' => ['$eq' => 'Developer']
-            ]
+                'position' => ['$eq' => 'Developer'],
+            ],
         ]);
 
         $result = $this->employeeRepository->filter($request);
@@ -121,8 +121,8 @@ class AdvancedFilteringTest extends TestCase
 
         $request = new Request([
             'filter' => [
-                'position' => ['$not' => 'Developer']
-            ]
+                'position' => ['$not' => 'Developer'],
+            ],
         ]);
 
         $result = $this->employeeRepository->filter($request);
@@ -138,8 +138,8 @@ class AdvancedFilteringTest extends TestCase
 
         $request = new Request([
             'filter' => [
-                'position' => ['$in' => ['Developer', 'Manager']]
-            ]
+                'position' => ['$in' => ['Developer', 'Manager']],
+            ],
         ]);
 
         $result = $this->employeeRepository->filter($request);
@@ -154,8 +154,8 @@ class AdvancedFilteringTest extends TestCase
 
         $request = new Request([
             'filter' => [
-                'hire_date' => ['$gt' => '2021-01-01']
-            ]
+                'hire_date' => ['$gt' => '2021-01-01'],
+            ],
         ]);
 
         $result = $this->employeeRepository->filter($request);
@@ -171,8 +171,8 @@ class AdvancedFilteringTest extends TestCase
 
         $request = new Request([
             'filter' => [
-                'hire_date' => ['$btw' => ['2021-01-01', '2023-12-31']]
-            ]
+                'hire_date' => ['$btw' => ['2021-01-01', '2023-12-31']],
+            ],
         ]);
 
         $result = $this->employeeRepository->filter($request);
@@ -187,8 +187,8 @@ class AdvancedFilteringTest extends TestCase
 
         $request = new Request([
             'filter' => [
-                'name' => ['$ilike' => 'john']
-            ]
+                'name' => ['$ilike' => 'john'],
+            ],
         ]);
 
         $result = $this->employeeRepository->filter($request);
@@ -203,8 +203,8 @@ class AdvancedFilteringTest extends TestCase
 
         $request = new Request([
             'filter' => [
-                'name' => ['$sw' => 'John']
-            ]
+                'name' => ['$sw' => 'John'],
+            ],
         ]);
 
         $result = $this->employeeRepository->filter($request);
@@ -230,33 +230,33 @@ class AdvancedFilteringTest extends TestCase
         Employee::factory()->create([
             'name' => 'John Developer',
             'position' => 'Developer',
-            'hire_date' => '2022-01-01'
+            'hire_date' => '2022-01-01',
         ]);
         Employee::factory()->create([
             'name' => 'Jane Manager',
             'position' => 'Manager',
-            'hire_date' => '2023-01-01'
+            'hire_date' => '2023-01-01',
         ]);
         Employee::factory()->create([
             'name' => 'Bob Developer',
             'position' => 'Developer',
-            'hire_date' => '2021-01-01'
+            'hire_date' => '2021-01-01',
         ]);
 
         $request = new Request([
             'search' => 'Developer',
             'filter' => [
                 'position' => ['$eq' => 'Developer'],
-                'hire_date' => ['$gte' => '2022-01-01']
+                'hire_date' => ['$gte' => '2022-01-01'],
             ],
             'sort' => '-name',
             'select' => 'id,name,position',
             'page' => 1,
-            'limit' => 10
+            'limit' => 10,
         ]);
 
         $result = $this->employeeRepository->filter($request);
-        
+
         $this->assertEquals(1, $result->count()); // Only John Developer matches all criteria
         $employee = $result->first();
         $this->assertEquals('John Developer', $employee->name);
