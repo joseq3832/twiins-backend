@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HealthController;
+use App\Http\Controllers\EmployeeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,3 +24,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::get('/health', [HealthController::class, 'check'])
     ->middleware('throttle:60,1')
     ->name('health.check');
+
+// API Version 1
+Route::prefix('v1')->group(function () {
+    // EMPLOYEES CRUD 
+    Route::apiResource('employees', EmployeeController::class);
+});
