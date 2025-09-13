@@ -322,17 +322,36 @@ class EmployeeController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $validatedData = $request->validate([
+        // First validate basic structure
+        $request->validate([
             'name' => 'sometimes|string|max:255',
             'email' => 'sometimes|email|unique:employees,email,'.$id,
             'position' => 'sometimes|string|max:255',
             'hire_date' => 'sometimes|date',
             'immediate_family' => 'sometimes|array',
             'immediate_family.*.id' => 'sometimes|integer|exists:immediate_family,id',
-            'immediate_family.*.family_name' => 'required_with:immediate_family|string|max:255',
-            'immediate_family.*.relationship' => 'required_with:immediate_family|string|max:255',
-            'immediate_family.*.date_of_birth' => 'required_with:immediate_family|date',
             'immediate_family.*._delete' => 'sometimes|boolean',
+        ]);
+
+        // Custom validation for immediate_family fields
+        if ($request->has('immediate_family')) {
+            $familyValidationRules = [];
+            foreach ($request->input('immediate_family', []) as $index => $familyMember) {
+                // Only require fields if not deleting
+                if (!isset($familyMember['_delete']) || !$familyMember['_delete']) {
+                    $familyValidationRules["immediate_family.{$index}.family_name"] = 'required|string|max:255';
+                    $familyValidationRules["immediate_family.{$index}.relationship"] = 'required|string|max:255';
+                    $familyValidationRules["immediate_family.{$index}.date_of_birth"] = 'required|date';
+                }
+            }
+            
+            if (!empty($familyValidationRules)) {
+                $request->validate($familyValidationRules);
+            }
+        }
+
+        $validatedData = $request->only([
+            'name', 'email', 'position', 'hire_date', 'immediate_family'
         ]);
 
         DB::beginTransaction();

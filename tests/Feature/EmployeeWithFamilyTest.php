@@ -214,6 +214,37 @@ class EmployeeWithFamilyTest extends TestCase
         ]);
     }
 
+    public function test_delete_immediate_family_without_required_fields()
+    {
+        // Create employee with multiple family members
+        $employee = Employee::factory()->create();
+        $familyMember1 = ImmediateFamily::factory()->create(['employee_id' => $employee->id]);
+        $familyMember2 = ImmediateFamily::factory()->create(['employee_id' => $employee->id]);
+        $familyMember3 = ImmediateFamily::factory()->create(['employee_id' => $employee->id]);
+
+        // Update data with only id and _delete flag (no other required fields)
+        $updateData = [
+            'name' => 'Updated Employee',
+            'immediate_family' => [
+                ['id' => $familyMember1->id, '_delete' => true],
+                ['id' => $familyMember2->id, '_delete' => true],
+                ['id' => $familyMember3->id, '_delete' => true],
+            ],
+        ];
+
+        $response = $this->withHeaders($this->authenticatedHeaders())
+            ->putJson('/api/v1/employees/'.$employee->id, $updateData);
+
+        // Should succeed without validation errors
+        $response->assertStatus(200)
+            ->assertJsonCount(0, 'immediate_family');
+
+        // Verify all family members were deleted
+        $this->assertSoftDeleted('immediate_family', ['id' => $familyMember1->id]);
+        $this->assertSoftDeleted('immediate_family', ['id' => $familyMember2->id]);
+        $this->assertSoftDeleted('immediate_family', ['id' => $familyMember3->id]);
+    }
+
     public function test_validation_errors_for_immediate_family()
     {
         $employeeData = [
